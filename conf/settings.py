@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     #local
     'users.apps.UsersConfig',
     'media.apps.MediaConfig',
+    'folders.apps.FoldersConfig',
 ]
 
 MIDDLEWARE = [

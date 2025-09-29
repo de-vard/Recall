@@ -6,7 +6,7 @@ from django.db import models
 
 class Image(models.Model):
     """Модель для хранения изобразения"""
-    public = models.UUIDField(
+    public_id = models.UUIDField(
         db_index=True,  # Ускоряет поиск по public_id.
         unique=True,  # Запрещает дубликаты.
         default=uuid.uuid4,  # Автоматически генерирует UUID.
