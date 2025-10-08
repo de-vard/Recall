@@ -1,7 +1,9 @@
 import uuid
 
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from django.http import Http404
 
 from media.models import Image
 
@@ -17,14 +19,14 @@ class UserManager(BaseUserManager):
         except (ObjectDoesNotExist, ValueError, TypeError):
             return Http404
 
-    def create_user(self, username, email, password=None, **kwargs):
-        """Создаёт и возвращает обычного пользователя"""
-        if username is None:
-            raise TypeError('Users must have a username.')
+    def _create_user(self, username, email, password=None, **kwargs):
+        """Используем приватный метод, для создания пользователя, что бы не повторять код"""
+        if password is None:
+            raise TypeError('Users must have a password.')
         if email is None:
             raise TypeError('Users must have an email.')
-        if password is None:
-            raise TypeError('User must have a password.')
+        if username is None:
+            raise TypeError('Users must have a username.')
 
         user = self.model(
             username=username,
@@ -35,16 +37,18 @@ class UserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
+    def create_user(self, username, email, password=None, **kwargs):
+        """Создаёт и возвращает обычного пользователя"""
+        user = self._create_user(username, email, password, **kwargs)
+        # TODO: разработать активацию подтверждения пользователя по email, ниже код закомментирован временно так как
+        #  реализация подтверждения будет создана позже,поэтому для удобства пока пользователи создаются активными
+        # user.is_active = False
+        # user.save(using=self._db)
+        return user
+
     def create_superuser(self, username, email, password, **kwargs):
         """Создаёт и возвращает суперпользователя"""
-        if password is None:
-            raise TypeError('Superusers must have a password.')
-        if email is None:
-            raise TypeError('Superusers must have an email.')
-        if username is None:
-            raise TypeError('Superusers must have a username.')
-
-        user = self.create_user(username, email, password, **kwargs)
+        user = self._create_user(username, email, password, **kwargs)
         user.is_superuser = True
         user.is_staff = True
         user.save(using=self._db)
@@ -60,7 +64,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         editable=False,  # Нельзя изменить вручную.
     )
     username = models.CharField(verbose_name="Логин пользователя", db_index=True, unique=True, max_length=255)
-    first_name = models.CharField(verbose_name="Имя",  max_length=255)
+    first_name = models.CharField(verbose_name="Имя", max_length=255)
     last_name = models.CharField(verbose_name="Фамилия", max_length=255)
     email = models.EmailField(verbose_name="email", db_index=True, unique=True)
 
@@ -68,18 +72,55 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(verbose_name="Активная УЗ", default=True)
     is_superuser = models.BooleanField(verbose_name="Суперпользователь?", default=False)
 
+    updated = models.DateTimeField(verbose_name="Обновление данных", auto_now=True)
+    created = models.DateTimeField(verbose_name="Дата регистрации", auto_now_add=True)
+
     image_avatar = models.ForeignKey(
         Image,
-        verbose_name="Изображдение аватарки",
+        verbose_name="Изображение аватарки",
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name="+", # отключаем атрибут для экономии системных ресурсов
+        related_name="+",  # отключаем атрибут для экономии системных ресурсов
     )
-    updated = models.DateTimeField(verbose_name="Обновление данных",auto_now=True)
-    created = models.DateTimeField(verbose_name="Дата регистрации",auto_now_add=True)
+    following = models.ManyToManyField(
+        'self',  # Указываем рекурсивную связь
+        through='Follow',  # указываем использовать промежуточную модель
+        symmetrical=False,  # Делаем связь несимметричной. При подписке на пользователя он не подписывается на вас
+        # автоматически, то есть (если я подписался на вас, это не значит, что вы подписались на меня).
 
-    USERNAME_FIELD = 'email'  # поле, используемое для аутентификации
+        related_name='followers',  # Даёт доступ к "обратной стороне" то есть user.following.all() → список
+        # пользователей, на которых я подписан. user.followers.all() → список пользователей, которые подписаны на меня.
+    )
+
+    USERNAME_FIELD = 'email'  # Явно указываем поле, используемое для аутентификации
+    EMAIL_FIELD = 'email'  # Явно указываем поле для email
     REQUIRED_FIELDS = ['username']  # обязательные при создании через createsuperuser
-    objects = UserManager()
 
+    objects = UserManager()  # Указываем менеджер модели
+
+
+class Follow(models.Model):
+    """Промежуточная модель подписки на пользователя"""
+    user_from = models.ForeignKey(
+        'users.User',
+        verbose_name="Подписавшийся пользователь",
+        related_name='+',  # тут мы не только экономим ресурсы, но также и решаем проблему с тем одинаковыми названиями
+        on_delete=models.CASCADE
+    )
+    user_to = models.ForeignKey(
+        'users.User',
+        verbose_name="Пользователь, на кого подписались",
+        related_name='+',  # тут мы не только экономим ресурсы, но также и решаем проблему с тем одинаковыми названиями
+        on_delete=models.CASCADE
+    )
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        indexes = [models.Index(fields=['-created']), ]
+        ordering = ['-created']
+        unique_together = ('user_from', 'user_to')  # запрещаем дублирующиеся подписки
+
+    def __str__(self):
+        return f'{self.user_from} подписался на {self.user_to}'
