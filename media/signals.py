@@ -1,0 +1,23 @@
+import os
+
+from django.db.models.signals import pre_delete
+from django.dispatch import receiver
+
+from media.models import Image
+
+
+# TODO: Замени функцию print() на логирование,
+#  что бы видеть если в логах если файл не был удален
+@receiver(pre_delete, sender=Image)
+def delete_files(sender, instance, **kwargs):
+    """Удаление файлов, если сама модель удалена"""
+
+    file_path = instance.image_file.path  # абсолютный путь к файлу
+
+    if not os.path.isfile(file_path):
+        print(f"Файл {file_path} не найден — возможно, уже был удалён.")
+        return
+    try:
+        os.remove(file_path)
+    except Exception as e:
+        print(f"Ошибка при удалении файла {file_path}: {e}")
