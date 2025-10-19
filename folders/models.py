@@ -1,4 +1,5 @@
 import uuid
+
 from django.db import models
 
 
@@ -23,12 +24,18 @@ class Folder(models.Model):
         related_name="+",
         verbose_name="Папка родитель",
         blank=True,
-        null=True
+        null=True,
+
     )
     created = models.DateTimeField(verbose_name="Дата создания", auto_now_add=True)
     updated = models.DateTimeField(verbose_name="Дата обновления", auto_now=True)
 
+    def __str__(self):
+        return f"{self.owner} - {self.title}"
+
     class Meta:
         # Добавляем ограничение, что бы, у одного владельца в одной родительской папке не было папок с одинаковым
         # названием
+
         unique_together = ('owner', 'parent_folder', 'title')
+

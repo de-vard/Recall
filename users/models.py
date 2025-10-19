@@ -72,8 +72,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(verbose_name="Активная УЗ", default=True)
     is_superuser = models.BooleanField(verbose_name="Суперпользователь?", default=False)
 
-    updated = models.DateTimeField(verbose_name="Обновление данных", auto_now=True)
-    created = models.DateTimeField(verbose_name="Дата регистрации", auto_now_add=True)
+    updated = models.DateTimeField(verbose_name="Обновление данных", auto_now=True, )
+    created = models.DateTimeField(verbose_name="Дата регистрации", auto_now_add=True, )
 
     image_avatar = models.ForeignKey(
         Image,
