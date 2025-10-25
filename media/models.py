@@ -1,5 +1,4 @@
 import mimetypes
-import uuid
 
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -7,6 +6,8 @@ from django.db.models import FileField
 from django.utils.deconstruct import deconstructible
 
 from mutagen import File as MutagenFile
+
+from abstract.models import AbstractModel
 
 
 @deconstructible
@@ -58,33 +59,15 @@ class SoundField(FileField):
             raise ValidationError("Файл повреждён или не читается как аудио.")
 
 
-class BaseFileModel(models.Model):
-    """Абстрактная базовая модель"""
-    public_id = models.UUIDField(
-        db_index=True,  # Ускоряет поиск по public_id.
-        unique=True,  # Запрещает дубликаты.
-        default=uuid.uuid4,  # Автоматически генерирует UUID.
-        editable=False,  # Нельзя изменить вручную.
-    )
-    title = models.CharField(verbose_name="Название", max_length=255)
+class Image(AbstractModel):
+    """Модель для хранения изображения"""
+
     uploaded_by_user = models.ForeignKey(
         'users.User',
         verbose_name="Кто загрузил файл",
         on_delete=models.CASCADE,
         related_name="+",  # отключаем атрибут для экономии системных ресурсов
     )
-    created = models.DateTimeField(verbose_name="Дата загрузки", auto_now_add=True)
-
-    def __str__(self):
-        return f"{self.title}"
-
-    class Meta:
-        abstract = True
-
-
-class Image(BaseFileModel):
-    """Модель для хранения изображения"""
-
     path_file = models.ImageField(
         verbose_name="Ссылка на файл",
         upload_to="files/images/%Y/%m/%d",
@@ -93,7 +76,20 @@ class Image(BaseFileModel):
         ],
     )
 
+    def __str__(self):
+        return f"{self.title}"
 
-class Sound(BaseFileModel):
-    """Модель для звука"""
+
+class Sound(AbstractModel):
+    """Модель для хранения звука"""
+
+    uploaded_by_user = models.ForeignKey(
+        'users.User',
+        verbose_name="Кто загрузил файл",
+        on_delete=models.CASCADE,
+        related_name="+",  # отключаем атрибут для экономии системных ресурсов
+    )
     path_file = SoundField(verbose_name="Ссылка на файл", upload_to="files/sounds/%Y/%m/%d")
+
+    def __str__(self):
+        return f"{self.title}"

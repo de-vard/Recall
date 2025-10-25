@@ -1,17 +1,11 @@
-import uuid
-
 from django.db import models
 
+from abstract.models import AbstractModel
 
-class Folder(models.Model):
+
+class Folder(AbstractModel):
     """Для папок"""
-    public_id = models.UUIDField(
-        db_index=True,  # Ускоряет поиск по public_id.
-        unique=True,  # Запрещает дубликаты.
-        default=uuid.uuid4,  # Автоматически генерирует UUID.
-        editable=False,  # Нельзя изменить вручную.
-    )
-    title = models.CharField(verbose_name="Название", max_length=255)
+
     owner = models.ForeignKey(
         'users.User',
         on_delete=models.CASCADE,
@@ -27,15 +21,12 @@ class Folder(models.Model):
         null=True,
 
     )
-    created = models.DateTimeField(verbose_name="Дата создания", auto_now_add=True)
-    updated = models.DateTimeField(verbose_name="Дата обновления", auto_now=True)
 
     def __str__(self):
         return f"{self.owner} - {self.title}"
 
     class Meta:
-        # Добавляем ограничение, что бы, у одного владельца в одной родительской папке не было папок с одинаковым
-        # названием
+        # Добавляем ограничение, что бы, у одного владельца в одной родительской
+        # папке не было папок с одинаковым названием
 
         unique_together = ('owner', 'parent_folder', 'title')
-

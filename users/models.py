@@ -1,23 +1,14 @@
 import uuid
 
-from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
-from django.http import Http404
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 
+from abstract.models import AbstractManager
 from media.models import Image
 
 
-class UserManager(BaseUserManager):
+class UserManager(AbstractManager):
     """Менеджер модели"""
-
-    def get_object_by_public_id(self, public_id):
-        """Метод для поиска по public_id"""
-        try:
-            instance = self.get(public_id=public_id)
-            return instance
-        except (ObjectDoesNotExist, ValueError, TypeError):
-            return Http404
 
     def _create_user(self, username, email, password=None, **kwargs):
         """Используем приватный метод, для создания пользователя, что бы не повторять код"""
