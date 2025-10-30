@@ -1,8 +1,6 @@
-import uuid
-
 from django.db import models
 
-from abstract.models import AbstractModel, AbstractManager
+from abstract.models import AbstractModel
 from courses.models import Course
 from media.models import Sound, Image
 
@@ -17,14 +15,24 @@ class FlashCardSet(AbstractModel):
     )
 
 
-class Card(models.Model):
+class CardQuerySet(models.QuerySet):
+    """QuerySet оптимизирующий загрузку связанных данных"""
+    def optimized(self):
+        """Добавляем в QuerySet свой метод"""
+        return self.select_related("image", "sound")
+
+
+class CardManager(models.Manager):
+    """Менеджер, использующий оптимизированный QuerySet"""
+    def get_queryset(self):
+        """Используем свой QuerySet вызывая метод оптимизации"""
+        return CardQuerySet(self.model, using=self._db).optimized()
+
+
+class Card(AbstractModel):
     """Карточка"""
-    public_id = models.UUIDField(
-        db_index=True,  # Ускоряет поиск по public_id.
-        unique=True,  # Запрещает дубликаты.
-        default=uuid.uuid4,  # Автоматически генерирует UUID.
-        editable=False,  # Нельзя изменить вручную.
-    )
+    title = None  # Удаляем поле которое наследуется из AbstractModel
+
     term = models.TextField(verbose_name="Термин")
     definition = models.TextField(verbose_name="Определения")
     transcription = models.TextField(verbose_name="Транскрипция", blank=True, null=True)
@@ -36,21 +44,17 @@ class Card(models.Model):
     )
     image = models.ForeignKey(
         Image,
-        # TODO: При удалении изображения в карточках пропадет оно тоже, как насчет запрета на удаление ?
         on_delete=models.CASCADE,
-
         null=True,
         blank=True,
         verbose_name='Фото'
     )
     sound = models.ForeignKey(
         Sound,
-        # TODO: При удалении аудио  в карточках пропадет оно тоже, как насчет запрета на удаление ?
         on_delete=models.CASCADE,
-
         null=True,
         blank=True,
         verbose_name='Аудиофайл'
     )
 
-    objects = AbstractManager()
+    objects = CardManager()

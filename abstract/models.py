@@ -20,6 +20,7 @@ class AbstractManager(models.Manager):
 class AbstractModel(models.Model):
     """Базовый абстрактный класс модели"""
     public_id = models.UUIDField(
+        primary_key=True,
         db_index=True,  # Ускоряет поиск по public_id.
         unique=True,  # Запрещает дубликаты.
         default=uuid.uuid4,  # Автоматически генерирует UUID.
@@ -27,7 +28,7 @@ class AbstractModel(models.Model):
     )
     title = models.CharField(verbose_name="Название", max_length=255)
     updated = models.DateTimeField(verbose_name="Обновление данных", auto_now=True, )
-    created = models.DateTimeField(verbose_name="Дата регистрации", auto_now_add=True, )
+    created = models.DateTimeField(verbose_name="Дата создания", auto_now_add=True, )
 
     objects = AbstractManager()
 

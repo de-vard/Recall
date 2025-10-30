@@ -1,13 +1,14 @@
 import uuid
 
+from django.contrib.auth.base_user import BaseUserManager
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 
 from abstract.models import AbstractManager
-from media.models import Image
+from media.models import SizeValueValidator
 
 
-class UserManager(AbstractManager):
+class UserManager(BaseUserManager, AbstractManager):
     """Менеджер модели"""
 
     def _create_user(self, username, email, password=None, **kwargs):
@@ -66,14 +67,13 @@ class User(AbstractBaseUser, PermissionsMixin):
     updated = models.DateTimeField(verbose_name="Обновление данных", auto_now=True, )
     created = models.DateTimeField(verbose_name="Дата регистрации", auto_now_add=True, )
 
-    image_avatar = models.ForeignKey(
-        Image,
-        verbose_name="Изображение аватарки",
-        on_delete=models.SET_NULL,
-        null=True,
+    avatar = models.ImageField(
+        upload_to="avatars/%Y/%m/%d",
+        validators=[SizeValueValidator(max_size_mb=3)],  # созданный кастомный валидатор для проверки размера файла
         blank=True,
-        related_name="+",  # отключаем атрибут для экономии системных ресурсов
+        null=True
     )
+
     following = models.ManyToManyField(
         'self',  # Указываем рекурсивную связь
         through='Follow',  # указываем использовать промежуточную модель

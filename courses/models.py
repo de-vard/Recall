@@ -71,12 +71,12 @@ class Course(AbstractModel):
     )
     students = models.ManyToManyField(
         User,
-        through='RegisteredUsers',
+        through='CourseStudent',
         verbose_name='Записанные на курс студенты',
         related_name='+'
     )
     folder = models.ForeignKey(
-        'Folder',
+        'folders.Folder',
         on_delete=models.PROTECT,
         verbose_name="Папка, в которой находится курс",
         related_name="courses"  # Для получения курсов которые находятся в папке
@@ -99,7 +99,7 @@ class Course(AbstractModel):
         return self.title
 
 
-class RegisteredUsers(models.Model):
+class CourseStudent(models.Model):
     """Промежуточная модель для регистрации пользователя на курс"""
     ROLE_CHOICES = (
         ("teacher", "Преподаватель"),
