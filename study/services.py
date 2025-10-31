@@ -49,7 +49,7 @@ class Study:
             cp.save()
 
             # снимаем слепок БД и сохраняем в MongoDB
-            mongo.snapshot_cardprogress(cp)
+            mongo.save_snapshot_cardprogress(cp)
 
     def finish_session(self):
         """Завершает учебную сессию"""
@@ -60,4 +60,4 @@ class Study:
         self.session.save()
 
         # снимаем слепок БД и сохраняем в MongoDB
-        mongo.snapshot_studysession(self.session)
+        mongo.save_snapshot_studysession(self.session)
