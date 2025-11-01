@@ -7,7 +7,7 @@ from django.utils.deconstruct import deconstructible
 
 from mutagen import File as MutagenFile
 
-from abstract.models import AbstractModel
+from abstract.models import AbstractModel, ProxyModel
 
 
 @deconstructible
@@ -59,7 +59,7 @@ class SoundField(FileField):
             raise ValidationError("Файл повреждён или не читается как аудио.")
 
 
-class Image(AbstractModel):
+class Image(AbstractModel, ProxyModel):
     """Модель для хранения изображения"""
 
     uploaded_by_user = models.ForeignKey(
@@ -76,11 +76,8 @@ class Image(AbstractModel):
         ],
     )
 
-    def __str__(self):
-        return f"{self.title}"
 
-
-class Sound(AbstractModel):
+class Sound(AbstractModel, ProxyModel):
     """Модель для хранения звука"""
 
     uploaded_by_user = models.ForeignKey(
@@ -90,6 +87,3 @@ class Sound(AbstractModel):
         related_name="+",  # отключаем атрибут для экономии системных ресурсов
     )
     path_file = SoundField(verbose_name="Ссылка на файл", upload_to="files/sounds/%Y/%m/%d")
-
-    def __str__(self):
-        return f"{self.title}"

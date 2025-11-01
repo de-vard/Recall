@@ -34,3 +34,13 @@ class AbstractModel(models.Model):
 
     class Meta:
         abstract = True
+
+
+class ProxyModel(models.Model):
+    """Прокси-модель для общего поведения"""
+
+    class Meta:
+        abstract = True  # модель не создаёт таблицу в БД
+
+    def __str__(self):
+        return self.title

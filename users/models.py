@@ -91,7 +91,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     objects = UserManager()  # Указываем менеджер модели
 
     def __str__(self):
-        return f"{self.username}{self.last_name}"
+        return f"{self.username} {self.last_name}"
 
 
 class Follow(models.Model):

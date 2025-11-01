@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from django.db import models
 from django.db.models import Count
 
-from abstract.models import AbstractModel, AbstractManager
+from abstract.models import AbstractModel, AbstractManager, ProxyModel
 
 User = get_user_model()
 
@@ -57,7 +57,7 @@ class CourseManager(AbstractManager):
         return self.get_queryset().with_likes_count()
 
 
-class Course(AbstractModel):
+class Course(AbstractModel, ProxyModel):
     """ Модель курсов, данная модель перегружена связями
         Не обращаться напрямую к .students.all(), а использовать prefetch_related
     """
@@ -94,9 +94,6 @@ class Course(AbstractModel):
         verbose_name = "Курс"
         verbose_name_plural = "Курсы"
         ordering = ["-created"]
-
-    def __str__(self):
-        return self.title
 
 
 class CourseStudent(models.Model):

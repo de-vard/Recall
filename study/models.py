@@ -21,15 +21,21 @@ class CardProgress(models.Model):
         verbose_name = "Прогресс карточки"
         verbose_name_plural = "Прогресс карточек"
 
-    def knows_word(self) -> BooleanField:
-        """Возвращает True, если пользователь знает слово"""
-        return self.is_known
-
 
 class StudySession(models.Model):
     """Хранение изученных наборов карточек"""
-    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Пользователь изучающий карточки")
-    flashcard_set = models.ForeignKey(FlashCardSet, on_delete=models.CASCADE, verbose_name="Набор карточек")
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='+',
+        verbose_name="Пользователь изучающий карточки"
+    )
+    flashcard_set = models.ForeignKey(
+        FlashCardSet,
+        on_delete=models.CASCADE,
+        related_name='+',
+        verbose_name="Набор карточек"
+    )
     start_time = models.DateTimeField(auto_now_add=True, verbose_name="Начало сессии")
     end_time = models.DateTimeField(null=True, blank=True, verbose_name="Окончание сессии")
     cards_studied = models.IntegerField(default=0, verbose_name="Количество изучаемых карточек")

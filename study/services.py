@@ -1,63 +1,61 @@
+import datetime
+
+from flashcards.models import FlashCardSet
 from study.models import StudySession, CardProgress
 from mongo_snapshot import MongoSnapshotService
 
 mongo = MongoSnapshotService()  # сервис MongoDB
 
 
-class Study:
+class SessionStudy:
+    def __init__(self, user_id, flashcard_set_id):
+        self.user_id = user_id
+        self.flashcard_set_id = flashcard_set_id
+        self.session = StudySession.objects.get_or_create(
+            user=self.user_id, flashcard_set=self.flashcard_set_id)[0]
 
-    def __init__(self, user, flashcard_set, learned_terms=None, finished_session_time=None):
-        self.user = user  # Передаем пользователя
-        self.flashcard_set = flashcard_set  # Передаем набор карточек
+    def get_cards(self):
+        """Карточки которые в наборе-изучения"""
+        return FlashCardSet.objects.get(public_id=self.flashcard_set_id).cards.all()
 
-        # создаём или получаем сессию изучения
-        self.session, _ = StudySession.objects.get_or_create(
-            user=user,
-            flashcard_set=flashcard_set
-        )
+    def get_cardprogress(self, card):
+        """Возвращает прогресс по КОНКРЕТНОЙ карточки"""
+        return CardProgress.objects.get_or_create(
+            user=self.user_id,
+            card=card
+        )[0]
 
-        # оптимизирован собственным менеджером, оптимизации не нуждается
-        self.terms = flashcard_set.cards.all()  # получаем карточки связанные с набором карточек
 
-        self.learned_terms = learned_terms or []
-        self.finished_session_time = finished_session_time
+class StudyService(SessionStudy):
+    """Класс для вывода слов для обучения"""
 
-    def is_known(self, term):
-        """Проверяет, знает ли пользователь термин"""
+    def __init__(self, user_id, flashcard_set_id):
+        super().__init__(user_id, flashcard_set_id)
+        self.cards_studied = 0
+        self.cards_known = 0
 
-        obj, _ = CardProgress.objects.get_or_create(
-            user=self.user,
-            card=term
-        )
-        return obj.is_known
+    def get_cards_when_is_unknown(self):
+        """Карточки которые не изучены пользователем"""
+        cards = []
+        for card in self.get_cards():
+            if not self.get_cardprogress(card).is_known:  # если пользователь не знает слово, добавляем в список
+                cards.append(card)
+        return cards
 
-    def get_terms_for_learning(self):
-        """Возвращает список слов, которые пользователь ещё не знает"""
+    def save_result_cards(self, cards: dict):
+        """Сохраняем результат карточек"""
+        self.cards_studied = len(cards)
+        for card, is_known in cards.items():
+            progress = self.get_cardprogress(card)
+            progress.is_known = is_known
+            if is_known:
+                self.cards_known += 1
+            progress.save()
+            mongo.save_snapshot_cardprogress(progress)
 
-        return [term for term in self.terms if not self.is_known(term)]
-
-    def save_learned_terms(self):
-        """Сохраняет прогресс пользователя"""
-
-        for term in self.learned_terms:
-            cp, _ = CardProgress.objects.get_or_create(
-                user=self.user,
-                card=term
-            )
-
-            cp.is_known = term.is_known
-            cp.save()
-
-            # снимаем слепок БД и сохраняем в MongoDB
-            mongo.save_snapshot_cardprogress(cp)
-
-    def finish_session(self):
-        """Завершает учебную сессию"""
-
-        if self.finished_session_time:
-            self.session.end_time = self.finished_session_time
-
+    def save_result_session(self):
+        self.session.end_time = datetime.datetime.now()
+        self.session.cards_studied = self.cards_studied
+        self.session.cards_known = self.cards_known
         self.session.save()
-
-        # снимаем слепок БД и сохраняем в MongoDB
         mongo.save_snapshot_studysession(self.session)

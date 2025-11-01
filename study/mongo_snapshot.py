@@ -4,7 +4,7 @@ from django.conf import settings
 
 
 class MongoSnapshotService:
-    """ Класс для подключения к MongoDB и предоставлению ей методов для заполнения данных.
+    """ Класс для подключения к MongoDB.
         Используется паттерн singleton для гарантии одного подключения
     """
     __instance = None

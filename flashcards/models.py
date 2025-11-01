@@ -1,11 +1,11 @@
 from django.db import models
 
-from abstract.models import AbstractModel
+from abstract.models import AbstractModel, ProxyModel
 from courses.models import Course
 from media.models import Sound, Image
 
 
-class FlashCardSet(AbstractModel):
+class FlashCardSet(AbstractModel, ProxyModel):
     """Набор карточек"""
     course = models.ForeignKey(
         Course,
@@ -58,3 +58,6 @@ class Card(AbstractModel):
     )
 
     objects = CardManager()
+
+    def __str__(self):
+        return f"{self.term} - {self.definition}"
