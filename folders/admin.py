@@ -1,8 +1,24 @@
 from django.contrib import admin
 
+from courses.models import Course
 from folders.models import Folder
+
+
+class FolderCourseInline(admin.TabularInline):
+    model = Course
+    extra = 0
+    autocomplete_fields = ("author",)
+    readonly_fields = ("created",)
+    fields = ("title", "author", "is_public", "created")
+    show_change_link = True
 
 
 @admin.register(Folder)
 class FolderAdmin(admin.ModelAdmin):
-    readonly_fields = ('public_id', 'created', 'updated', 'parent_folder')  # запрет на удаление
+    list_display = ("title", "owner", "parent_folder", "created")
+    list_filter = ("owner", "parent_folder")
+    search_fields = ("title", "owner__email")
+    autocomplete_fields = ("owner", "parent_folder")
+    ordering = ("created",)
+
+    inlines = [FolderCourseInline]

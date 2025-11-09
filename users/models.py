@@ -93,6 +93,11 @@ class User(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return f"{self.username} {self.last_name}"
 
+    class Meta:
+        verbose_name = "Пользователь"
+        verbose_name_plural = "Пользователи"
+        ordering = ["-created"]
+
 
 class Follow(models.Model):
     """Промежуточная модель подписки на пользователя"""
@@ -115,6 +120,9 @@ class Follow(models.Model):
         indexes = [models.Index(fields=['-created']), ]
         ordering = ['-created']
         unique_together = ('user_from', 'user_to')  # запрещаем дублирующиеся подписки
+
+        verbose_name = "Подписчик"
+        verbose_name_plural = "Подписчики"
 
     def __str__(self):
         return f'{self.user_from} подписался на {self.user_to}'

@@ -14,6 +14,11 @@ class FlashCardSet(AbstractModel, ProxyModel):
         verbose_name='Курсы'
     )
 
+    class Meta:
+        verbose_name = "Набор"
+        verbose_name_plural = "Наборы"
+        ordering = ["-created"]
+
 
 class CardQuerySet(models.QuerySet):
     """QuerySet оптимизирующий загрузку связанных данных"""
@@ -61,3 +66,8 @@ class Card(AbstractModel):
 
     def __str__(self):
         return f"{self.term} - {self.definition}"
+
+    class Meta:
+        verbose_name = "Карточка"
+        verbose_name_plural = "Карточки"
+        ordering = ["-created"]

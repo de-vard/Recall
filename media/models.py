@@ -76,6 +76,11 @@ class Image(AbstractModel, ProxyModel):
         ],
     )
 
+    class Meta:
+        verbose_name = "Изображение"
+        verbose_name_plural = "Изображения"
+        ordering = ["-created"]
+
 
 class Sound(AbstractModel, ProxyModel):
     """Модель для хранения звука"""
@@ -87,3 +92,8 @@ class Sound(AbstractModel, ProxyModel):
         related_name="+",  # отключаем атрибут для экономии системных ресурсов
     )
     path_file = SoundField(verbose_name="Ссылка на файл", upload_to="files/sounds/%Y/%m/%d")
+
+    class Meta:
+        verbose_name = "Произношение"
+        verbose_name_plural = "Произношения"
+        ordering = ["-created"]

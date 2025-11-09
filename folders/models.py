@@ -26,7 +26,8 @@ class Folder(AbstractModel):
         return f"{self.owner} - {self.title}"
 
     class Meta:
+        verbose_name = "Папка"
+        verbose_name_plural = "Папки"
         # Добавляем ограничение, что бы, у одного владельца в одной родительской
         # папке не было папок с одинаковым названием
-
         unique_together = ('owner', 'parent_folder', 'title')

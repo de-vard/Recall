@@ -16,11 +16,11 @@ class CourseQuerySet(models.QuerySet):
 
     def with_students(self):
         """Предзагружает студентов через промежуточную таблицу"""
-        return self.prefetch_related("registeredusers__user")
+        return self.prefetch_related("students")
 
     def with_likes_count(self):
         """Добавляет аннотацию с количеством лайков"""
-        return self.annotate(likes_count=Count('courselike'))
+        return self.annotate(likes_count=Count('likes'))
 
     def public(self):
         """Фильтрация публичных курсов"""
