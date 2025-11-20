@@ -1,5 +1,4 @@
 from django.contrib import admin
-
 from courses.models import Course
 from folders.models import Folder
 
@@ -15,8 +14,10 @@ class FolderCourseInline(admin.TabularInline):
 
 @admin.register(Folder)
 class FolderAdmin(admin.ModelAdmin):
+    list_select_related = ("owner", "parent_folder")
+
     list_display = ("title", "owner", "parent_folder", "created")
-    list_filter = ("owner", "parent_folder")
+    list_filter = ("owner",)  # если добавить "parent_folder" вызывает огромные запросы в бд
     search_fields = ("title", "owner__email")
     autocomplete_fields = ("owner", "parent_folder")
     ordering = ("created",)

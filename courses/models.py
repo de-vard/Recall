@@ -105,7 +105,11 @@ class CourseStudent(models.Model):
     )
 
     course = models.ForeignKey(Course, on_delete=models.CASCADE, verbose_name='Курс')
-    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Пользователь')
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE,
+        verbose_name='Пользователь',
+        related_name='studying_courses'
+    )
     role = models.CharField(max_length=10, choices=ROLE_CHOICES, default="student", verbose_name="Роль")
     date_joined = models.DateTimeField(auto_now_add=True, verbose_name="Дата записи")
 

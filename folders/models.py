@@ -4,12 +4,12 @@ from abstract.models import AbstractModel
 
 
 class Folder(AbstractModel):
-    """Для папок"""
+    """Модель для папок"""
 
     owner = models.ForeignKey(
         'users.User',
         on_delete=models.CASCADE,
-        related_name="+",  # отключаем атрибут для экономии системных ресурсов
+        related_name="folders",  # отключаем атрибут для экономии системных ресурсов
         verbose_name="Создатель папки"
     )
     parent_folder = models.ForeignKey(

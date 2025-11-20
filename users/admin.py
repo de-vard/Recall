@@ -30,7 +30,10 @@ class FollowersInline(admin.TabularInline):
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
     list_display = (
-    "username", "email", "first_name", "last_name", "is_staff", "is_active", "created", "avatar_preview")
+        "username", "public_id", "email",
+        "first_name", "last_name", "is_staff",
+        "is_active", "created", "avatar_preview"
+    )
     list_filter = ("is_staff", "is_active", "created")
     search_fields = ("username", "email", "first_name", "last_name")
     ordering = ("-created",)

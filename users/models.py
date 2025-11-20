@@ -3,6 +3,7 @@ import uuid
 from django.contrib.auth.base_user import BaseUserManager
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
+from django.urls import reverse
 
 from abstract.models import AbstractManager
 from media.models import SizeValueValidator
@@ -97,6 +98,13 @@ class User(AbstractBaseUser, PermissionsMixin):
         verbose_name = "Пользователь"
         verbose_name_plural = "Пользователи"
         ordering = ["-created"]
+
+    def get_absolute_url(self):
+        """
+        Возвращает полный URL для просмотра этого курса.
+        Использует reverse() для генерации URL по имени маршрута.
+        """
+        return reverse('user-detail', kwargs={'public_id': self.public_id})
 
 
 class Follow(models.Model):
