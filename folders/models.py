@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse
 
 from abstract.models import AbstractModel
 
@@ -15,7 +16,7 @@ class Folder(AbstractModel):
     parent_folder = models.ForeignKey(
         'self',  # Создаем рекурсивную связь, для связи таблицы на себя, для возможности создавать вложенные папки
         on_delete=models.PROTECT,
-        related_name="+",
+        related_name="children",
         verbose_name="Папка родитель",
         blank=True,
         null=True,
@@ -23,7 +24,10 @@ class Folder(AbstractModel):
     )
 
     def __str__(self):
-        return f"{self.owner} - {self.title}"
+        return f"{self.title}"
+
+    def get_absolute_url(self):
+        return reverse('folder-home', kwargs={'public_id': self.public_id})
 
     class Meta:
         verbose_name = "Папка"

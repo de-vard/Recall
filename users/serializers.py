@@ -3,7 +3,6 @@ from rest_framework import serializers
 
 from courses.models import Course
 
-
 User = get_user_model()
 
 
@@ -11,12 +10,12 @@ class UserSerializer(serializers.ModelSerializer):
     """Список всех пользователей"""
     url = serializers.SerializerMethodField()
 
+    def get_url(self, obj):
+        return obj.get_absolute_url()  # используем метод из модели
+
     class Meta:
         model = User
         fields = ('public_id', 'username', 'avatar', 'url')
-
-    def get_url(self, obj):
-        return obj.get_absolute_url()  # используем метод модели
 
 
 class CourseMiniSerializer(serializers.ModelSerializer):
@@ -78,6 +77,3 @@ class MeSerializerRetrieve(serializers.ModelSerializer):
     def get_following(self, obj):
         """ Возвращает список пользователей, на которых подписан текущий пользователь"""
         return list(obj.following.values_list('username', flat=True))
-
-
-

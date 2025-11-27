@@ -100,10 +100,6 @@ class User(AbstractBaseUser, PermissionsMixin):
         ordering = ["-created"]
 
     def get_absolute_url(self):
-        """
-        Возвращает полный URL для просмотра этого курса.
-        Использует reverse() для генерации URL по имени маршрута.
-        """
         return reverse('user-detail', kwargs={'public_id': self.public_id})
 
 

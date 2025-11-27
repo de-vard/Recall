@@ -16,7 +16,7 @@ class FolderCourseInline(admin.TabularInline):
 class FolderAdmin(admin.ModelAdmin):
     list_select_related = ("owner", "parent_folder")
 
-    list_display = ("title", "owner", "parent_folder", "created")
+    list_display = ("public_id", "title", "owner", "parent_folder", "created")
     list_filter = ("owner",)  # если добавить "parent_folder" вызывает огромные запросы в бд
     search_fields = ("title", "owner__email")
     autocomplete_fields = ("owner", "parent_folder")
