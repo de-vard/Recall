@@ -1,6 +1,5 @@
 from django.contrib import admin
 
-
 from .models import Course, CourseStudent, CourseLike
 
 
@@ -40,7 +39,7 @@ class CourseAdmin(admin.ModelAdmin):
     )
 
     list_filter = ("is_public", "folder", "created")
-    search_fields = ("title", "description", "author__username", "folder__name")
+    search_fields = ("title", "description", "author__username", "folder__owner__username")
     autocomplete_fields = ("author", "folder")
     ordering = ("-created",)
 
@@ -58,7 +57,8 @@ class CourseAdmin(admin.ModelAdmin):
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
-        return qs.with_related().with_students().with_likes_count()
+        return qs.select_related("author", "folder"). \
+            prefetch_related("students", "likes")
 
     # ----- Custom columns -----
 

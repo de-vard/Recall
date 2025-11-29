@@ -1,4 +1,5 @@
 from django.db import models
+from rest_framework.reverse import reverse
 
 from abstract.models import AbstractModel, ProxyModel
 from courses.models import Course
@@ -14,6 +15,9 @@ class FlashCardSet(AbstractModel, ProxyModel):
         verbose_name='Курсы'
     )
 
+    def get_absolute_url(self):
+        return reverse('flash_card_set-detail', kwargs={'public_id': self.public_id})
+
     class Meta:
         verbose_name = "Набор"
         verbose_name_plural = "Наборы"
@@ -22,6 +26,7 @@ class FlashCardSet(AbstractModel, ProxyModel):
 
 class CardQuerySet(models.QuerySet):
     """QuerySet оптимизирующий загрузку связанных данных"""
+
     def optimized(self):
         """Добавляем в QuerySet свой метод"""
         return self.select_related("image", "sound")
@@ -29,6 +34,7 @@ class CardQuerySet(models.QuerySet):
 
 class CardManager(models.Manager):
     """Менеджер, использующий оптимизированный QuerySet"""
+
     def get_queryset(self):
         """Используем свой QuerySet вызывая метод оптимизации"""
         return CardQuerySet(self.model, using=self._db).optimized()

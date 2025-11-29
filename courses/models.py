@@ -1,6 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.db import models
-from django.db.models import Count
+from rest_framework.reverse import reverse
 
 from abstract.models import AbstractModel, AbstractManager, ProxyModel
 
@@ -9,18 +9,6 @@ User = get_user_model()
 
 class CourseQuerySet(models.QuerySet):
     """Оптимизированный QuerySet для модели Course"""
-
-    def with_related(self):
-        """Загружает связанные данные (author, folder) одним запросом"""
-        return self.select_related("author", "folder")
-
-    def with_students(self):
-        """Предзагружает студентов через промежуточную таблицу"""
-        return self.prefetch_related("students")
-
-    def with_likes_count(self):
-        """Добавляет аннотацию с количеством лайков"""
-        return self.annotate(likes_count=Count('likes'))
 
     def public(self):
         """Фильтрация публичных курсов"""
@@ -34,27 +22,9 @@ class CourseManager(AbstractManager):
         """Возвращает  кастомный QuerySet  класса CourseQuerySet"""
         return CourseQuerySet(self.model, using=self._db)
 
-    def with_related(self):
-        """ Возвращает курсы с заранее загруженными связанными данными:
-            автором и папкой (select_related используется для оптимизации запросов).
-        """
-        return self.get_queryset().with_related()
-
-    def with_students(self):
-        """ Возвращает курсы с предзагруженными студентами, записанными на них.
-            Использует prefetch_related для уменьшения количества запросов.
-        """
-        return self.get_queryset().with_students()
-
     def public(self):
         """Возвращает только публичные курсы (is_public=True)."""
         return self.get_queryset().public()
-
-    def with_likes_count(self):
-        """ Добавляет к каждому курсу аннотированное поле likes_count,
-            показывающее количество лайков. Использует агрегирующую функцию Count.
-        """
-        return self.get_queryset().with_likes_count()
 
 
 class Course(AbstractModel, ProxyModel):
@@ -89,6 +59,9 @@ class Course(AbstractModel, ProxyModel):
         blank=True
     )
     objects = CourseManager()  # Указываем свою модель
+
+    def get_absolute_url(self):
+        return reverse('course-detail', kwargs={'public_id': self.public_id})
 
     class Meta:
         verbose_name = "Курс"
