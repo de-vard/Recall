@@ -41,8 +41,8 @@ class UserSerializerRetrieve(serializers.ModelSerializer):
 class MeSerializerRetrieve(serializers.ModelSerializer):
     """Детальный просмотр своего профиля """
 
-    email = serializers.EmailField(read_only=True)  # делаем поле недатированным
-    username = serializers.EmailField(read_only=True)  # делаем поле недатированным
+    email = serializers.EmailField(read_only=True)  # делаем поле не редактированным
+    username = serializers.EmailField(read_only=True)  # делаем поле не редактированным
 
     studying_courses = serializers.SerializerMethodField()  # список курсов, на которых учится пользователь
     folders = serializers.SerializerMethodField()  # список папок пользователя
@@ -77,3 +77,11 @@ class MeSerializerRetrieve(serializers.ModelSerializer):
     def get_following(self, obj):
         """ Возвращает список пользователей, на которых подписан текущий пользователь"""
         return list(obj.following.values_list('username', flat=True))
+
+
+class UserAuthSerializer(serializers.ModelSerializer):
+    """Минимальная информация о пользователе при логине. Для авторизации"""
+
+    class Meta:
+        model = User
+        fields = ("public_id", "username", "email", "avatar")

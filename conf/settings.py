@@ -44,10 +44,12 @@ INSTALLED_APPS = [
 
     'silk',  # для оптимизации запросов silk
     'rest_framework',  # drf
+    'rest_framework_simplejwt',  # JWT авторизация\регистрация по токенам
     'corsheaders',  # для возможности фронта отправлять запросы на django
 
     # local
     'users.apps.UsersConfig',
+    'auth_api.apps.AuthApiConfig',
     'media.apps.MediaConfig',
     'folders.apps.FoldersConfig',
     'courses.apps.CoursesConfig',
@@ -55,6 +57,15 @@ INSTALLED_APPS = [
     'study.apps.StudyConfig',
 
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend'
+    ],
+}
 
 MIDDLEWARE = [
     'silk.middleware.SilkyMiddleware',  # для оптимизации запросов silk

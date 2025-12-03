@@ -17,7 +17,7 @@ class CardInline(admin.TabularInline):
 
 @admin.register(FlashCardSet)
 class FlashCardSetAdmin(admin.ModelAdmin):
-    list_display = ("title", "course", "created", "updated")
+    list_display = ("public_id", "title", "course", "created", "updated")
     search_fields = ("title", "course__title")
     list_filter = ("course", "created")
     autocomplete_fields = ("course",)
@@ -49,4 +49,3 @@ class CardAdmin(admin.ModelAdmin):
         "sound",
         ("created", "updated"),
     )
-

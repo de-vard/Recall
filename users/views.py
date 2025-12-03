@@ -15,13 +15,13 @@ User = get_user_model()
 
 class UserAPIView(generics.ListAPIView):
     """Возвращает список всх пользователей """
-    queryset = User.objects.all().only('public_id', 'username', 'avatar')
+    queryset = User.objects.exclude(is_superuser=True).only('public_id', 'username', 'avatar')
     serializer_class = UserSerializer
 
 
 class UserAPIRetrieve(generics.RetrieveAPIView):
     """Детальная информация об чужом профиля"""
-    queryset = User.objects.all().only(
+    queryset = User.objects.exclude(is_superuser=True).only(
         'public_id', 'username',
         'first_name', 'last_name', 'avatar',
     ).prefetch_related('authored_courses')
@@ -32,7 +32,7 @@ class UserAPIRetrieve(generics.RetrieveAPIView):
 
 class MeAPIRetrieve(generics.RetrieveUpdateDestroyAPIView):
     """Детальная информация своего профиля"""
-    queryset = User.objects.all()
+    queryset = User.objects.exclude(is_superuser=True)
     permission_classes = [IsAuthor]
     serializer_class = MeSerializerRetrieve
     lookup_field = 'public_id'  # Указываем, что ищем по полю public_id
@@ -57,7 +57,7 @@ class FollowUserAPI(APIView):
 
 
 class UnfollowUserAPI(APIView):
-    """Подписка на курс"""
+    """Отписка на курс"""
     permission_classes = [IsAuthenticated]
     http_method_names = ["post"]
 

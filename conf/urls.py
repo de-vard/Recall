@@ -26,6 +26,7 @@ urlpatterns = [
     path('api/v1/folder/', include('folders.urls')),
     path('api/v1/course/', include('courses.urls')),
     path('api/v1/lesson/', include('flashcards.urls')),
+    path('api/v1/auth_api/', include('auth_api.urls')),
 ]
 
 if settings.DEBUG:

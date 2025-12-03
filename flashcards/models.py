@@ -68,6 +68,9 @@ class Card(AbstractModel):
         verbose_name='Аудиофайл'
     )
 
+    def get_absolute_url(self):
+        return reverse('card-detail', kwargs={'public_id': self.public_id})
+
     objects = CardManager()
 
     def __str__(self):
