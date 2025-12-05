@@ -78,6 +78,14 @@ class LessonShortSerializer(serializers.ModelSerializer):
         return obj.get_absolute_url()
 
 
+class CourseCreate(serializers.ModelSerializer):
+    """Создание курса"""
+    class Meta:
+        model = Course
+        fields = ('title', 'description', 'is_public')
+        read_only_fields = ("public_id", "author", "folder")
+
+
 class CourseDetailSerializer(serializers.ModelSerializer):
     """Детальный просмотр курса если пользователь подписан на курс"""
     students_count = serializers.SerializerMethodField()

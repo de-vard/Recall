@@ -6,20 +6,29 @@ from folders.models import Folder
 
 class FolderChildSerializer(serializers.ModelSerializer):
     """Сериализатор для дочерних папок"""
+    url = serializers.SerializerMethodField()
 
     class Meta:
         model = Folder
-        fields = ('public_id', 'title',)
+        fields = ('url', 'public_id', 'title',)
+
+    def get_url(self, obj):
+        return obj.get_absolute_url()
 
 
 class CourseShortSerializer(serializers.ModelSerializer):
     """Краткий сериализатор для курсов в папке"""
+    url = serializers.SerializerMethodField()
 
     class Meta:
         model = Course
         fields = (
-            'public_id', 'title',
+            'url', 'public_id', 'title',
         )
+        ref_name = 'FolderCourseShort'  # Уникальное имя
+
+    def get_url(self, obj):
+        return obj.get_absolute_url()
 
 
 class FolderSerializer(serializers.ModelSerializer):
@@ -36,12 +45,13 @@ class FolderSerializer(serializers.ModelSerializer):
     def get_go_back(self, obj):
         """Вернуться на одну директорию назад"""
         if obj.parent_folder:
-            return obj.parent_folder.get_absolute_url()
-        return None
+            return obj.parent_folder.public_id
+        return obj.public_id
 
 
 class FolderCreateSerializer(serializers.ModelSerializer):
     """Создание папки """
+
     class Meta:
         model = Folder
         fields = ("public_id", "title", "parent_folder")

@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 import os
+from datetime import timedelta
 from pathlib import Path
 import environ
 
@@ -45,6 +46,7 @@ INSTALLED_APPS = [
     'silk',  # для оптимизации запросов silk
     'rest_framework',  # drf
     'rest_framework_simplejwt',  # JWT авторизация\регистрация по токенам
+    'drf_yasg',  # для документирования api
     'corsheaders',  # для возможности фронта отправлять запросы на django
 
     # local
@@ -57,18 +59,38 @@ INSTALLED_APPS = [
     'study.apps.StudyConfig',
 
 ]
-
+# Опциональные настройки Swagger
+SWAGGER_SETTINGS = {
+    'DEFAULT_INFO': 'conf.yasg.schema_view',
+    'USE_SESSION_AUTH': False,
+    'SECURITY_DEFINITIONS': {
+        'Bearer': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header',
+            'description': 'JWT токен в формате: Bearer <token>'
+        }
+    },
+}
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',  # Аутентификация через JWT-токены
     ),
     'DEFAULT_FILTER_BACKENDS': [
         'django_filters.rest_framework.DjangoFilterBackend'
     ],
+    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema'  # swagger для документации API
+}
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),  # продолжительность жизни токена ACCESS
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),  # продолжительность жизни токена REFRESH
+    "ROTATE_REFRESH_TOKENS": True,  # Генерировать новый refresh при использовании
+    "BLACKLIST_AFTER_ROTATION": True,  # Блокировать старый refresh
 }
 
 MIDDLEWARE = [
-    'silk.middleware.SilkyMiddleware',  # для оптимизации запросов silk
+    'silk.middleware.SilkyMiddleware',  # для отслеживания количества запросов silk
 
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',

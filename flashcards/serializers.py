@@ -19,6 +19,7 @@ class CourseShortSerializer(serializers.ModelSerializer):
     class Meta:
         model = Course
         fields = ('url', 'title')
+        ref_name = 'FlashcardCourseShort'  # Другое уникальное имя
 
     def get_url(self, obj):
         return obj.get_absolute_url()

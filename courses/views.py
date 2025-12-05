@@ -7,7 +7,7 @@ from rest_framework.views import APIView
 
 from courses.models import Course, CourseStudent, CourseLike
 from courses.permissions import IsAuthor
-from courses.serializers import CourseListSerializer, CourseRetrieveSerializer, CourseDetailSerializer
+from courses.serializers import CourseListSerializer, CourseRetrieveSerializer, CourseDetailSerializer, CourseCreate
 
 
 class CourseListAPIView(generics.ListAPIView):
@@ -24,6 +24,7 @@ class CourseListAPIView(generics.ListAPIView):
 class CourseRetrieveAPIView(generics.RetrieveAPIView):
     """Просмотр курска детально"""
     lookup_field = "public_id"
+    lookup_url_kwarg = 'public_id'  # Явно указываем параметр URL для swagger
     _course_object = None  # для кеширования, экземпляр класса, который хранит уже загруженный объект курса.
 
     def get_object(self):
@@ -123,3 +124,15 @@ class LikeCourseAPI(APIView):
         else:
             CourseLike.objects.create(user=user, course=course)
             return Response({"detail": "Курс лайкнут"}, status=200)
+
+
+class CourseCreateAPIView(generics.CreateAPIView):
+    queryset = Course.objects.all()
+    serializer_class = CourseCreate
+    permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        # Подставляем автора и папку из URL
+        folder_id = self.kwargs.get("public_id")  # это public_id папки
+        serializer.save(author=self.request.user, folder_id=folder_id)
+        # TODO: добавить проверку что бы наименования не повторялись как в папке

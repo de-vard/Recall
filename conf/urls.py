@@ -17,6 +17,7 @@ Including another URLconf
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
+from .yasg import urlpatterns as doc_urls
 
 from conf import settings
 
@@ -28,6 +29,8 @@ urlpatterns = [
     path('api/v1/lesson/', include('flashcards.urls')),
     path('api/v1/auth_api/', include('auth_api.urls')),
 ]
+
+urlpatterns += doc_urls
 
 if settings.DEBUG:
     urlpatterns += [path('silk/', include('silk.urls', namespace='silk'))]
