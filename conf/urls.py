@@ -17,17 +17,24 @@ Including another URLconf
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
+from rest_framework import routers
+
+from courses.views import CourseViewSet
 from .yasg import urlpatterns as doc_urls
 
 from conf import settings
+
+router = routers.SimpleRouter()
+
+router.register(r'api/v1/course', CourseViewSet, basename='course')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/v1/user/', include('users.urls')),
     path('api/v1/folder/', include('folders.urls')),
-    path('api/v1/course/', include('courses.urls')),
     path('api/v1/lesson/', include('flashcards.urls')),
     path('api/v1/auth_api/', include('auth_api.urls')),
+    path('', include(router.urls)),
 ]
 
 urlpatterns += doc_urls

@@ -75,6 +75,7 @@ SWAGGER_SETTINGS = {
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',  # Аутентификация через JWT-токены
+        'rest_framework.authentication.SessionAuthentication',  # Todo: Аунтификция по сессии, убрать на проде
     ),
     'DEFAULT_FILTER_BACKENDS': [
         'django_filters.rest_framework.DjangoFilterBackend'
