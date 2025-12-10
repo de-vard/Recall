@@ -16,7 +16,7 @@ class FlashCardSet(AbstractModel, ProxyModel):
     )
 
     def get_absolute_url(self):
-        return reverse('flash_card_set-detail', kwargs={'public_id': self.public_id})
+        return reverse('flashcards-detail', kwargs={'public_id': self.public_id})
 
     class Meta:
         verbose_name = "Набор"

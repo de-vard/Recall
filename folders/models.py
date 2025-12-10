@@ -27,7 +27,7 @@ class Folder(AbstractModel):
         return f"{self.title}"
 
     def get_absolute_url(self):
-        return reverse('folder-home', kwargs={'public_id': self.public_id})
+        return reverse('folder-detail', kwargs={'public_id': self.public_id})
 
     class Meta:
         verbose_name = "Папка"

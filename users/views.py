@@ -1,10 +1,11 @@
 from django.contrib.auth import get_user_model
-from rest_framework import generics, viewsets
-from django.shortcuts import get_object_or_404
+from rest_framework import mixins
+
+from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.views import APIView
 
 from rest_framework.response import Response
+from rest_framework.viewsets import GenericViewSet
 
 from users.models import Follow
 from users.permissions import IsAuthor
@@ -13,60 +14,70 @@ from users.serializers import UserSerializer, UserSerializerRetrieve, MeSerializ
 User = get_user_model()
 
 
-class UserAPIView(generics.ListAPIView):
-    """Возвращает список всх пользователей """
-    queryset = User.objects.exclude(is_superuser=True).only('public_id', 'username', 'avatar')
-    serializer_class = UserSerializer
+class UserViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin, mixins.ListModelMixin,
+                  GenericViewSet):
+    lookup_field = 'public_id'
 
+    def get_queryset(self):
+        if self.action == "list":
+            return User.objects.all().only(
+                "public_id", "username", "avatar"
+            )
 
-class UserAPIRetrieve(generics.RetrieveAPIView):
-    """Детальная информация об чужом профиля"""
-    queryset = User.objects.exclude(is_superuser=True).only(
-        'public_id', 'username',
-        'first_name', 'last_name', 'avatar',
-    ).prefetch_related('authored_courses')
+        # detail + follow/unfollow
+        return User.objects.all().select_related().prefetch_related(
+            "authored_courses"
+        )
 
-    serializer_class = UserSerializerRetrieve
-    lookup_field = 'public_id'  # Указываем, что ищем по полю public_id
+    def get_permissions(self):
+        """Ограничение по методам"""
+        # Словарь соответствия действий и разрешений
+        permission_map = {
+            'list': [IsAuthenticated],
+            'retrieve': [IsAuthenticated],
+            'update': [IsAuthor],  # автор ли
+            'partial_update': [IsAuthor],  # автор ли
+            'destroy': [IsAuthor],  # автор ли
+            'metadata': [IsAuthenticated],  # метаданные
+            'subscribe_unsubscribe': [IsAuthenticated],
+            'like_dislike': [IsAuthenticated],
+        }
 
+        # Получаем permission_classes для текущего действия или пустой список по умолчанию
+        permission_classes = permission_map.get(self.action, [])
 
-class MeAPIRetrieve(generics.RetrieveUpdateDestroyAPIView):
-    """Детальная информация своего профиля"""
-    queryset = User.objects.exclude(is_superuser=True)
-    permission_classes = [IsAuthor]
-    serializer_class = MeSerializerRetrieve
-    lookup_field = 'public_id'  # Указываем, что ищем по полю public_id
+        return [permission() for permission in permission_classes]
 
+    def get_serializer_class(self):
+        # Swagger вызывает view без kwargs, для того что бы swagger не давал ошибку
+        if getattr(self, "swagger_fake_view", False):
+            return UserSerializer
 
-class FollowUserAPI(APIView):
-    """Подписка на курс"""
-    permission_classes = [IsAuthenticated]
-    http_method_names = ["post"]
+        if self.action == "list":
+            return UserSerializer
+        if self.action == "retrieve":
+            # если пользователь смотрит на себя → свой сериализатор
+            if self.get_object() == self.request.user:
+                return MeSerializerRetrieve
+            return UserSerializerRetrieve
 
-    def post(self, request, public_id):
-        user_to = get_object_or_404(User, public_id=public_id)
+        return UserSerializerRetrieve
+
+    @action(methods=["post"], detail=True, permission_classes=[IsAuthenticated])
+    def follow(self, request, public_id=None):
+        user_to = self.get_object()
         user_from = request.user
-        if user_from == user_to:
+
+        if user_to == user_from:
             return Response({"detail": "Нельзя подписаться на самого себя."}, status=400)
-        elif Follow.objects.filter(user_from=user_from, user_to=user_to).exists():
-            return Response({"detail": "Вы уже подписаны."}, status=400)
-        else:
-            Follow.objects.create(user_from=user_from, user_to=user_to)
 
-        return Response({"detail": "Успешно подписано!"}, status=201)
-
-
-class UnfollowUserAPI(APIView):
-    """Отписка на курс"""
-    permission_classes = [IsAuthenticated]
-    http_method_names = ["post"]
-
-    def post(self, request, public_id):
-        user_to = get_object_or_404(User, public_id=public_id)
-        user_from = request.user
         follow = Follow.objects.filter(user_from=user_from, user_to=user_to).first()
-        if not follow:
-            return Response({"detail": "Вы не подписаны."}, status=400)
 
+        # если нет — подписываем
+        if not follow:
+            Follow.objects.create(user_from=user_from, user_to=user_to)
+            return Response({"detail": "Подписка оформлена!"}, status=201)
+
+        # если есть — отписываем
         follow.delete()
-        return Response({"detail": "Успешно отписано!"}, status=200)
+        return Response({"detail": "Отписка выполнена!"}, status=200)

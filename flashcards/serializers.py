@@ -47,6 +47,4 @@ class FlashCardCreateSerializer(serializers.ModelSerializer):
 class CardDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Card
-        fields = "__all__"
-
-
+        fields = ["term", "definition", "transcription", "flashcard", "image", "sound"]

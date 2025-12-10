@@ -1,12 +1,13 @@
 from rest_framework.response import Response
-from rest_framework import generics, status
+from rest_framework import status
 from rest_framework.permissions import AllowAny
+from rest_framework.viewsets import ViewSet
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from auth_api.serializers.register import RegisterSerializer
 
 
-class RegisterView(generics.CreateAPIView):
+class RegisterViewSet(ViewSet):
     serializer_class = RegisterSerializer
     permission_classes = (AllowAny,)
     http_method_names = ['post']

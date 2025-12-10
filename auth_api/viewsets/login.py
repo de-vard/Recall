@@ -1,12 +1,13 @@
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
-from rest_framework import status, generics
+from rest_framework import status
+from rest_framework.viewsets import ViewSet
 from rest_framework_simplejwt.exceptions import TokenError, InvalidToken
 
 from auth_api.serializers.login import LoginSerializer
 
 
-class LoginView(generics.CreateAPIView):
+class LoginViewSet(ViewSet):
     """
     ViewSet для обработки входа в систему (логина) с использованием JWT.
     Позволяет пользователям аутентифицироваться, отправляя логин и пароль.

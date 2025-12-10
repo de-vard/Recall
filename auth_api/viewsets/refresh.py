@@ -1,11 +1,11 @@
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenRefreshView
 from rest_framework.permissions import AllowAny
-from rest_framework import status, generics
+from rest_framework import status, viewsets
 from rest_framework_simplejwt.exceptions import TokenError, InvalidToken
 
 
-class RefreshView(generics.CreateAPIView, TokenRefreshView):
+class RefreshViewSet(viewsets.ViewSet, TokenRefreshView):
     """
     ViewSet для обновления JWT access-токена.
     Пользователь отправляет refresh-токен, и API возвращает новый access-токен.

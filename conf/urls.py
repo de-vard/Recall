@@ -19,21 +19,30 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
 
+from auth_api.viewsets.login import LoginViewSet
+from auth_api.viewsets.refresh import RefreshViewSet
+from auth_api.viewsets.register import RegisterViewSet
 from courses.views import CourseViewSet
+from flashcards.views import CardViewSet, FlashViewSet
+from folders.views import FolderViewSet
+from users.views import UserViewSet
 from .yasg import urlpatterns as doc_urls
 
 from conf import settings
 
-router = routers.SimpleRouter()
+router = routers.DefaultRouter()
 
 router.register(r'api/v1/course', CourseViewSet, basename='course')
+router.register(r'api/v1/folder', FolderViewSet, basename='folder')
+router.register(r'api/v1/card', CardViewSet, basename='card')
+router.register(r'api/v1/flashcards', FlashViewSet, basename='flashcards')
+router.register(r'api/v1/user', UserViewSet, basename='user')
+router.register(r'api/v1/auth/register', RegisterViewSet, basename='auth-register')
+router.register(r'api/v1/auth/login', LoginViewSet, basename='auth-login')
+router.register(r'api/v1/auth/refresh', RefreshViewSet, basename='auth-refresh')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/v1/user/', include('users.urls')),
-    path('api/v1/folder/', include('folders.urls')),
-    path('api/v1/lesson/', include('flashcards.urls')),
-    path('api/v1/auth_api/', include('auth_api.urls')),
     path('', include(router.urls)),
 ]
 
