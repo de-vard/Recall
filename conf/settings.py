@@ -9,14 +9,19 @@ https://docs.djangoproject.com/en/5.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
+
+# Важно: добавляем папку с приложениями в путь Python
+
 import os
+import sys
 from datetime import timedelta
 from pathlib import Path
 import environ
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
+sys.path.insert(0, str(BASE_DIR))  # Добавляем корень проекта
+sys.path.insert(0, os.path.join(BASE_DIR, 'backend_apps'))  # Добавляем папку с приложениями
 # Подключаем виртуальную среду
 env = environ.Env()
 environ.Env.read_env(BASE_DIR / '.env')
@@ -50,13 +55,13 @@ INSTALLED_APPS = [
     'corsheaders',  # для возможности фронта отправлять запросы на django
 
     # local
-    'users.apps.UsersConfig',
-    'auth_api.apps.AuthApiConfig',
-    'media.apps.MediaConfig',
-    'folders.apps.FoldersConfig',
-    'courses.apps.CoursesConfig',
-    'flashcards.apps.FlashcardsConfig',
-    'study.apps.StudyConfig',
+    'backend_apps.users.apps.UsersConfig',
+    'backend_apps.auth_api.apps.AuthApiConfig',
+    'backend_apps.media.apps.MediaConfig',
+    'backend_apps.folders.apps.FoldersConfig',
+    'backend_apps.courses.apps.CoursesConfig',
+    'backend_apps.flashcards.apps.FlashcardsConfig',
+    'backend_apps.study.apps.StudyConfig',
 
 ]
 # Опциональные настройки Swagger
@@ -72,7 +77,11 @@ SWAGGER_SETTINGS = {
         }
     },
 }
+
 REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',  # для пагинации
+    'PAGE_SIZE': 25,  # для пагинации
+
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',  # Аутентификация через JWT-токены
         'rest_framework.authentication.SessionAuthentication',  # Todo: Аунтификция по сессии, убрать на проде

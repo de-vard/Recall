@@ -19,13 +19,13 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
 
-from auth_api.viewsets.login import LoginViewSet
-from auth_api.viewsets.refresh import RefreshViewSet
-from auth_api.viewsets.register import RegisterViewSet
-from courses.views import CourseViewSet
-from flashcards.views import CardViewSet, FlashViewSet
-from folders.views import FolderViewSet
-from users.views import UserViewSet
+from backend_apps.auth_api.viewsets.login import LoginViewSet
+from backend_apps.auth_api.viewsets.refresh import RefreshViewSet
+from backend_apps.auth_api.viewsets.register import RegisterViewSet
+from backend_apps.courses.views import CourseViewSet
+from backend_apps.flashcards.views import CardViewSet, FlashViewSet
+from backend_apps.folders.views import FolderViewSet
+from backend_apps.users.views import UserViewSet
 from .yasg import urlpatterns as doc_urls
 
 from conf import settings
