@@ -33,7 +33,7 @@ class FlashCardSetAdmin(admin.ModelAdmin):
 
 @admin.register(Card)
 class CardAdmin(admin.ModelAdmin):
-    list_display = ("term", "flashcard", "created")
+    list_display = ("public_id", "term", "flashcard", "created")
     search_fields = ("term", "definition", "flashcard__title")
     list_filter = ("flashcard", "created")
     autocomplete_fields = ("flashcard", "image", "sound")

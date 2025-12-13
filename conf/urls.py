@@ -25,6 +25,7 @@ from backend_apps.auth_api.viewsets.register import RegisterViewSet
 from backend_apps.courses.views import CourseViewSet
 from backend_apps.flashcards.views import CardViewSet, FlashViewSet
 from backend_apps.folders.views import FolderViewSet
+from backend_apps.study.views import StudyAPIView, StudySessionHistoryAPIView, CardProgressHistoryAPIView
 from backend_apps.users.views import UserViewSet
 from .yasg import urlpatterns as doc_urls
 
@@ -43,6 +44,9 @@ router.register(r'api/v1/auth/refresh', RefreshViewSet, basename='auth-refresh')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path("api/v1/study/<flashcard_set_id>/", StudyAPIView.as_view()),
+    path("api/v1/study/<uuid:flashcard_set_id>/history/sessions/", StudySessionHistoryAPIView.as_view()),
+    path("api/v1/study/history/cards/<uuid:card_id>/", CardProgressHistoryAPIView.as_view()),
     path('', include(router.urls)),
 ]
 

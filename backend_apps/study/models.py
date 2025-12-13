@@ -12,10 +12,14 @@ class CardProgress(models.Model):
     card = models.ForeignKey(Card, on_delete=models.CASCADE, verbose_name="Изучающая карточка")
     is_known = models.BooleanField(verbose_name="Знает/Не знает термин?", default=False)
     date_answer = models.DateTimeField(verbose_name="Дата ответа", auto_now=True, )
+    session = models.ForeignKey('StudySession', on_delete=models.CASCADE, verbose_name="Сессия")
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=['user', 'card'], name='unique_user_card')
+            models.UniqueConstraint(
+                fields=['user', 'card', 'session'],
+                name='unique_user_card_session'
+            )
         ]
         verbose_name = "Прогресс карточки"
         verbose_name_plural = "Прогресс карточек"
