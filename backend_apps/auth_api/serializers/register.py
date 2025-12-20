@@ -21,11 +21,7 @@ class RegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         # Список всех полей, которые могут быть включены в запрос или ответ
-        fields = [
-            'id', 'username', 'email',
-            'first_name', 'last_name',
-            'password', 'avatar',
-        ]
+        fields = ['id', 'username', 'email', 'password']
 
     def create(self, validated_data):
         # Используем метод `create_user`, который мы ранее написали
