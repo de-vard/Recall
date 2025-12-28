@@ -60,9 +60,6 @@ class Course(AbstractModel, ProxyModel):
     )
     objects = CourseManager()  # Указываем свою модель
 
-    def get_absolute_url(self):
-        return reverse('course-detail', kwargs={'public_id': self.public_id})
-
     class Meta:
         verbose_name = "Курс"
         verbose_name_plural = "Курсы"

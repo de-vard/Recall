@@ -18,17 +18,11 @@ class FolderChildSerializer(serializers.ModelSerializer):
 
 class CourseShortSerializer(serializers.ModelSerializer):
     """Краткий сериализатор для курсов в папке"""
-    url = serializers.SerializerMethodField()
 
     class Meta:
         model = Course
-        fields = (
-            'url', 'public_id', 'title',
-        )
+        fields = ('public_id', 'title',)
         ref_name = 'FolderCourseShort'  # Уникальное имя
-
-    def get_url(self, obj):
-        return obj.get_absolute_url()
 
 
 class FolderSerializer(serializers.ModelSerializer):

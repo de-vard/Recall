@@ -1,20 +1,20 @@
 from django.db.models import Count
-from rest_framework import viewsets, serializers, status
+from rest_framework import viewsets, serializers, status, mixins
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.viewsets import GenericViewSet
 
 from backend_apps.courses.models import Course, CourseStudent, CourseLike
 from backend_apps.courses.permissions import IsSubscribe, IsAuthor
-from backend_apps.courses.serializers import CourseListSerializer, CourseDetailSerializer, CourseCreate
+from backend_apps.courses.serializers import CourseDetailSerializer, CourseCreate
 
 
-# from backend_apps.courses.models import Course, CourseStudent, CourseLike
-# from backend_apps.courses.permissions import IsAuthor, IsSubscribe
-# from backend_apps.courses.serializers import CourseListSerializer, CourseCreate, CourseDetailSerializer
-
-
-class CourseViewSet(viewsets.ModelViewSet):
+class CourseViewSet(mixins.CreateModelMixin,
+                    mixins.RetrieveModelMixin,
+                    mixins.UpdateModelMixin,
+                    mixins.DestroyModelMixin,
+                    GenericViewSet):
     lookup_field = "public_id"
     lookup_url_kwarg = "public_id"
     _course_object = None  # для кеширования, экземпляр класса, который хранит уже загруженный объект курса.
@@ -77,8 +77,7 @@ class CourseViewSet(viewsets.ModelViewSet):
 
     def get_serializer_class(self):
         """Выбор сериализатора """
-        if self.action == "list":
-            return CourseListSerializer
+
         if self.action == "retrieve":
             return CourseDetailSerializer
         if self.action == "create":
@@ -86,7 +85,7 @@ class CourseViewSet(viewsets.ModelViewSet):
         if self.action in ("update", "partial_update"):
             return CourseCreate
 
-        return CourseListSerializer
+        return CourseDetailSerializer
 
     def perform_create(self, serializer):
         """Перед созданием курса"""
@@ -94,12 +93,12 @@ class CourseViewSet(viewsets.ModelViewSet):
         folder = validated_data.get('folder')
 
         if not folder:
-            raise serializers.ValidationError({"folder": "This field is required."})
+            raise serializers.ValidationError({"folder": "Это поле обязательно для заполнения."})
 
         # Проверяем, что текущий пользователь является автором папки
         if folder.owner != self.request.user:
             raise serializers.ValidationError(
-                {"folder": "You can only add courses to your own folders."}
+                {"folder": "Вы можете добавлять курсы только в свои собственные папки."}
             )
 
         serializer.save(author=self.request.user, folder=folder)
@@ -140,5 +139,3 @@ class CourseViewSet(viewsets.ModelViewSet):
             action_type = "disliked"
 
         return Response({"detail": message, "action": action_type, })
-
-

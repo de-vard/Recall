@@ -15,9 +15,6 @@ class FlashCardSet(AbstractModel, ProxyModel):
         verbose_name='Курсы'
     )
 
-    def get_absolute_url(self):
-        return reverse('flashcards-detail', kwargs={'public_id': self.public_id})
-
     class Meta:
         verbose_name = "Набор"
         verbose_name_plural = "Наборы"

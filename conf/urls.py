@@ -25,6 +25,7 @@ from backend_apps.auth_api.viewsets.register import RegisterViewSet
 from backend_apps.courses.views import CourseViewSet
 from backend_apps.flashcards.views import CardViewSet, FlashViewSet
 from backend_apps.folders.views import FolderViewSet
+from backend_apps.media.views import ImageViewSet, SoundViewSet
 from backend_apps.study.views import StudyAPIView, StudySessionHistoryAPIView, CardProgressHistoryAPIView
 from backend_apps.users.views import UserViewSet
 from .yasg import urlpatterns as doc_urls
@@ -41,6 +42,8 @@ router.register(r'api/v1/user', UserViewSet, basename='user')
 router.register(r'api/v1/auth/register', RegisterViewSet, basename='auth-register')
 router.register(r'api/v1/auth/login', LoginViewSet, basename='auth-login')
 router.register(r'api/v1/auth/refresh', RefreshViewSet, basename='auth-refresh')
+router.register(r"api/v1/images", ImageViewSet, basename="image")
+router.register(r"api/v1/sounds", SoundViewSet, basename="sound")
 
 urlpatterns = [
     path('admin/', admin.site.urls),
