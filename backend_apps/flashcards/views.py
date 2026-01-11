@@ -1,4 +1,5 @@
 from rest_framework import mixins
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import GenericViewSet
 
@@ -37,8 +38,8 @@ class FlashViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin, mixins.Up
         # Словарь соответствия действий и разрешений
         permission_map = {
             'list': [IsAuthenticated],
-            'create': [IsAuthenticated],
-            'retrieve': [FlashIsSubscribe],  # автор ли или подписан он на курс
+            'create': [FlashIsAuthor],
+            'retrieve': [FlashIsSubscribe | FlashIsAuthor],  # автор ли или он подписан на курс
             'update': [FlashIsAuthor],  # автор ли
             'partial_update': [FlashIsAuthor],  # автор ли
             'destroy': [FlashIsAuthor],  # автор ли

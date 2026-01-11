@@ -27,6 +27,23 @@ class SizeValueValidator:
             )
 
 
+def validate_audio_file_mime(value):
+    """Проверка по MIME-типу"""
+    mime_type, _ = mimetypes.guess_type(value.name)
+    if not mime_type or not mime_type.startswith("audio"):
+        raise ValidationError("Файл должен быть аудио (mp3, wav, ogg и т.д.)")
+
+
+def validate_audio_file_mutagen(value):
+    """Проверка через Mutagen"""
+    try:
+        audio = MutagenFile(getattr(value, "file", value))
+        if audio is None or not hasattr(audio, "info"):
+            raise ValidationError("Файл не является поддерживаемым аудиофайлом.")
+    except Exception:
+        raise ValidationError("Файл повреждён или не читается как аудио.")
+
+
 class SoundField(FileField):
     """Поле для хранения аудиофайлов с проверкой через Mutagen"""
 
@@ -35,28 +52,16 @@ class SoundField(FileField):
     def __init__(self, *args, **kwargs):
         # Добавляем свои валидаторы
         validators = kwargs.pop("validators", [])
-        validators.append(self.validate_audio_file)
-        validators.append(self.validate_audio_file_use_mutagen)
-        super().__init__(validators=validators, *args, **kwargs)
+        validators.extend([validate_audio_file_mime, validate_audio_file_mutagen])
+        kwargs['validators'] = validators
+        super().__init__(*args, **kwargs)
 
-    @staticmethod
-    def validate_audio_file(value):
-        """Проверка по MIME-типу (по расширению файла)"""
-        mime_type, _ = mimetypes.guess_type(value.name)
-        if not mime_type or not mime_type.startswith("audio"):
-            raise ValidationError("Файл должен быть аудио (mp3, wav, ogg и т.д.)")
-
-    @staticmethod
-    def validate_audio_file_use_mutagen(value):
-        """ Глубокая проверка через Mutagen (анализ содержимого
-            файла, что он действительно аудио, а не другой файл с расширением аудио)
-        """
-        try:
-            audio = MutagenFile(getattr(value, "file", value))
-            if audio is None or not hasattr(audio, "info"):
-                raise ValidationError("Файл не является поддерживаемым аудиофайлом.")
-        except Exception:
-            raise ValidationError("Файл повреждён или не читается как аудио.")
+    def deconstruct(self):
+        name, path, args, kwargs = super().deconstruct()
+        # Удаляем валидаторы из kwargs, чтобы они не участвовали в сериализации
+        # Они будут добавлены при инициализации
+        kwargs.pop('validators', None)
+        return name, path, args, kwargs
 
 
 class Image(AbstractModel, ProxyModel):

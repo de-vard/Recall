@@ -34,11 +34,11 @@ from conf import settings
 
 router = routers.DefaultRouter()
 
-router.register(r'api/v1/course', CourseViewSet, basename='course')
-router.register(r'api/v1/folder', FolderViewSet, basename='folder')
-router.register(r'api/v1/card', CardViewSet, basename='card')
+router.register(r'api/v1/courses', CourseViewSet, basename='course')
+router.register(r'api/v1/folders', FolderViewSet, basename='folder')
+router.register(r'api/v1/cards', CardViewSet, basename='card')
 router.register(r'api/v1/flashcards', FlashViewSet, basename='flashcards')
-router.register(r'api/v1/user', UserViewSet, basename='user')
+router.register(r'api/v1/users', UserViewSet, basename='user')
 router.register(r'api/v1/auth/register', RegisterViewSet, basename='auth-register')
 router.register(r'api/v1/auth/login', LoginViewSet, basename='auth-login')
 router.register(r'api/v1/auth/refresh', RefreshViewSet, basename='auth-refresh')

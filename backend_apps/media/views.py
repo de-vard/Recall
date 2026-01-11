@@ -5,6 +5,8 @@ from backend_apps.media.models import Image, Sound
 from .serializers import ImageSerializer, SoundSerializer
 
 
+# TODO: код заглушка, пока не знаю как пользователь будет работать с медиа,
+#  в дальнейшем нужно будет его изменить
 class ImageViewSet(ModelViewSet):
     queryset = Image.objects.all()
     serializer_class = ImageSerializer

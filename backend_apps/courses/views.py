@@ -1,4 +1,4 @@
-from django.db.models import Count
+from django.db.models import Count, Q
 from rest_framework import viewsets, serializers, status, mixins
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
@@ -7,10 +7,11 @@ from rest_framework.viewsets import GenericViewSet
 
 from backend_apps.courses.models import Course, CourseStudent, CourseLike
 from backend_apps.courses.permissions import IsSubscribe, IsAuthor
-from backend_apps.courses.serializers import CourseDetailSerializer, CourseCreate
+from backend_apps.courses.serializers import CourseDetailSerializer, CourseCreateSerializer, CourseListSerializer
 
 
-class CourseViewSet(mixins.CreateModelMixin,
+class CourseViewSet(mixins.ListModelMixin,
+                    mixins.CreateModelMixin,
                     mixins.RetrieveModelMixin,
                     mixins.UpdateModelMixin,
                     mixins.DestroyModelMixin,
@@ -40,7 +41,7 @@ class CourseViewSet(mixins.CreateModelMixin,
                 .select_related("author", "folder")
                 .annotate(
                     likes_count=Count("likes"), students_count=Count("students")
-                )
+                ).order_by("-likes_count")
             )
         if self.action == "retrieve":
             return (
@@ -61,7 +62,7 @@ class CourseViewSet(mixins.CreateModelMixin,
         permission_map = {
             'list': [IsAuthenticated],
             'create': [IsAuthenticated],
-            'retrieve': [IsSubscribe],  # автор ли или подписан он на курс
+            'retrieve': [IsAuthenticated],  # автор ли или подписан он на курс
             'update': [IsAuthor],  # автор ли
             'partial_update': [IsAuthor],  # автор ли
             'destroy': [IsAuthor],  # автор ли
@@ -81,11 +82,11 @@ class CourseViewSet(mixins.CreateModelMixin,
         if self.action == "retrieve":
             return CourseDetailSerializer
         if self.action == "create":
-            return CourseCreate
+            return CourseCreateSerializer
         if self.action in ("update", "partial_update"):
-            return CourseCreate
+            return CourseCreateSerializer
 
-        return CourseDetailSerializer
+        return CourseListSerializer
 
     def perform_create(self, serializer):
         """Перед созданием курса"""
@@ -139,3 +140,21 @@ class CourseViewSet(mixins.CreateModelMixin,
             action_type = "disliked"
 
         return Response({"detail": message, "action": action_type, })
+
+    @action(detail=False, methods=["get"], permission_classes=[IsAuthenticated])
+    def my_courses(self, request):
+        user = request.user
+
+        queryset = (
+            Course.objects.filter(Q(author=user) | Q(students=user))
+            .select_related("author", "folder")
+            .annotate(
+                likes_count=Count("likes", distinct=True),
+                students_count=Count("students", distinct=True),
+            ).distinct()
+        )
+
+        serializer = CourseListSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+

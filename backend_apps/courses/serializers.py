@@ -8,14 +8,9 @@ User = get_user_model()
 
 
 class UserShortSerializer(serializers.ModelSerializer):
-    url = serializers.SerializerMethodField()
-
     class Meta:
         model = User
-        fields = ("url", "username")
-
-    def get_url(self, obj):
-        return obj.get_absolute_url()
+        fields = ("public_id", "username")
 
 
 class LessonShortSerializer(serializers.ModelSerializer):
@@ -50,7 +45,7 @@ class CourseDetailSerializer(BaseCourseSerializer):
 
     class Meta(BaseCourseSerializer.Meta):
         fields = BaseCourseSerializer.Meta.fields + (
-            "lessons", "students", "likes", "is_liked", "is_subscribed",
+            "lessons", "students", "likes", "is_liked", "is_subscribed", "is_public",
         )
 
     def get_is_liked(self, obj):
@@ -66,10 +61,26 @@ class CourseDetailSerializer(BaseCourseSerializer):
         return CourseStudent.objects.filter(user=user, course=obj).exists()
 
 
-class CourseCreate(serializers.ModelSerializer):
+class CourseCreateSerializer(serializers.ModelSerializer):
     """Создание курса"""
 
     class Meta:
         model = Course
         fields = ("title", "description", "is_public", "folder")
         read_only_fields = ("public_id", "author")
+
+
+class CourseListSerializer(serializers.ModelSerializer):
+    """Создание курса"""
+    likes_count = serializers.IntegerField(read_only=True)
+    students_count = serializers.IntegerField(read_only=True)
+
+    # author = serializers.CharField(source="author.username", read_only=True)
+    author = UserShortSerializer(read_only=True)
+
+    class Meta:
+        model = Course
+        fields = (
+            "title", "description", "students_count",
+            "likes_count", "author", "public_id"
+        )

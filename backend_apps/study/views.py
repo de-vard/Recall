@@ -14,7 +14,7 @@ from backend_apps.study.utils import mongo_to_json
 
 class StudyAPIView(APIView):
     """API для изучения карточек пользователя"""
-    permission_classes = [IsAuthenticated, ]
+    permission_classes = [IsAuthenticated, ]  # Todo: Добавить проверку что пользователь подписан на курс
 
     @swagger_auto_schema(
         operation_description="Получает список неизученных карточек для пользователя и набора",
@@ -29,7 +29,7 @@ class StudyAPIView(APIView):
         session = StudyService(user_id, flashcard_set_id)
         cards = session.get_cards_when_is_unknown()
 
-        serializer = CardSerializer(cards, many=True)
+        serializer = CardSerializer(cards, many=True, context={'request': request})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @swagger_auto_schema(
