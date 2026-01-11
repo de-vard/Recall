@@ -1,0 +1,53 @@
+/* Header.css */
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: white;
+  padding: 0 20px;
+  height: 60px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.home-icon {
+  font-size: 24px;
+  cursor: pointer;
+  color: #333;
+  transition: color 0.2s;
+}
+
+.home-icon:hover {
+  color: #007bff;
+}
+
+.search-box {
+  flex: 1;
+  max-width: 500px;
+  margin: 0 20px;
+  position: relative;
+}
+
+.search-box input {
+  width: 100%;
+  padding: 10px 15px 10px 40px;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  font-size: 14px;
+  outline: none;
+  transition: border 0.2s;
+}
+
+.search-box input:focus {
+  border-color: #007bff;
+}
+
+.search-box::before {
+  content: "🔍";
+  position: absolute;
+  left: 15px;
+  top: 10px;
+  font-size: 14px;
+  color: #888;
+}
+

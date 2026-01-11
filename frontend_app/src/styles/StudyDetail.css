@@ -1,0 +1,150 @@
+.study-detail-container {
+  min-height: calc(100vh - 64px);
+  height: calc(100vh - 64px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #f5f7fa;
+  gap: 24px;
+  overflow: hidden;
+}
+
+/* ---------- CARD ---------- */
+.study-detail-flip-card {
+  width: 90vw;
+  max-width: 480px;
+  height: 420px;
+  perspective: 1000px;
+  cursor: pointer;
+}
+
+.study-detail-flip-card-inner {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transition: transform 0.8s ease;
+  transform-style: preserve-3d;
+  border-radius: 16px;
+  background: white;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+}
+
+.study-detail-flipped .study-detail-flip-card-inner {
+  transform: rotateY(180deg);
+}
+
+.study-detail-flip-card-front,
+.study-detail-flip-card-back {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  border-radius: 16px;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.study-detail-flip-card-front {
+  background: linear-gradient(135deg, #6C8EFF, #4A6BFF);
+  color: white;
+}
+
+.study-detail-flip-card-front h2 {
+  font-size: 2.4rem;
+  margin-bottom: 16px;
+}
+
+.study-detail-flip-card-front p {
+  font-size: 1.3rem;
+}
+
+.study-detail-flip-card-back {
+  transform: rotateY(180deg);
+  background: white;
+  color: #212529;
+}
+
+.study-detail-flip-card-back img {
+  max-height: 180px;
+  margin-bottom: 20px;
+  border-radius: 12px;
+}
+
+/* ---------- AUDIO ---------- */
+.study-detail-audio-container {
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.study-detail-card-audio {
+  height: 40px;
+}
+
+/* кнопка звука — теперь НИЧТО её не переопределит */
+.study-detail-autoplay-toggle {
+  all: unset;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.study-detail-autoplay-toggle:hover {
+  background: rgba(255,255,255,0.35);
+  transform: scale(1.1);
+}
+
+/* ---------- UI ---------- */
+.study-detail-progress-text {
+  font-weight: 600;
+}
+
+.study-detail-answer-buttons {
+  display: flex;
+  gap: 20px;
+}
+
+.study-detail-answer-buttons button {
+  padding: 14px 32px;
+  border-radius: 12px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.study-detail-answer-buttons button:first-child {
+  background: #28a745;
+  color: white;
+}
+
+.study-detail-answer-buttons button:last-child {
+  background: #dc3545;
+  color: white;
+}
+
+.study-detail-reset-button {
+  padding: 12px 28px;
+  border-radius: 10px;
+  border: none;
+  background: #e9ecef;
+  cursor: pointer;
+}
+
+/* ---------- CONGRATS ---------- */
+.study-detail-congrats {
+  background: white;
+  padding: 40px;
+  border-radius: 16px;
+  text-align: center;
+}

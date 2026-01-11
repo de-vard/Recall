@@ -1,0 +1,62 @@
+/* FolderForm.css */
+
+.folder-form-page {
+  display: flex;
+  justify-content: center;
+  padding: 40px 20px;
+}
+
+.folder-form {
+  width: 100%;
+  max-width: 400px;
+  background: #fff;
+  padding: 24px;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.folder-form h1 {
+  font-size: 20px;
+  margin: 0;
+}
+
+.folder-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+}
+
+.folder-form input {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.folder-form input:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+.folder-form button {
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  background: #007bff;
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.folder-form button:hover {
+  background: #0056b3;
+}
+
+.form-error {
+  color: #dc3545;
+  font-size: 14px;
+}

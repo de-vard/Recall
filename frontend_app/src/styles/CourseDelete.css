@@ -1,0 +1,67 @@
+/* CourseDelete.css */
+.course-delete-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 20px;
+}
+
+.course-delete-card {
+  width: 100%;
+  max-width: 400px;
+  background: #fff;
+  padding: 24px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  text-align: center;
+}
+
+.course-delete-card h1 {
+  font-size: 20px;
+  margin: 0;
+}
+
+.course-delete-card .error {
+  color: #dc3545;
+  font-size: 14px;
+}
+
+.course-delete-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+}
+
+.course-delete-buttons button {
+  padding: 10px 16px;
+  font-size: 14px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.course-delete-buttons button:hover {
+  transform: translateY(-1px);
+}
+
+.course-delete-buttons .delete {
+  background: #dc3545;
+  color: #fff;
+}
+
+.course-delete-buttons .delete:hover {
+  background: #b02a37;
+}
+
+.course-delete-buttons .cancel {
+  background: #f1f3f5;
+  color: #212529;
+}
+
+.course-delete-buttons .cancel:hover {
+  background: #e9ecef;
+}

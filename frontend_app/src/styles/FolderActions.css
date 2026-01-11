@@ -1,0 +1,21 @@
+.folder-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.folder-actions a {
+  display: inline-flex;
+  padding: 6px;
+  border-radius: 6px;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.folder-actions img {
+  width: 24px;
+  height: 24px;
+}
+
+.folder-actions a:hover {
+  background: #e9ecef;
+  transform: scale(1.1);
+}

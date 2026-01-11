@@ -1,0 +1,503 @@
+/* CardForm.css */
+
+.card-container {
+  --primary-color: #4255ff;
+  --gray-100: #FFFFFF;
+  --gray-200: #F6F7FB;
+  --gray-300: #EDEFF4;
+  --gray-400: #D9DDE8;
+  --gray-500: #939BB4;
+  --gray-600: #586380;
+  --gray-700: #2E3856;
+  --gray-800: #282E3E;
+  
+  position: relative;
+  background: var(--gray-100);
+  border: 1px solid var(--gray-300);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(46, 56, 86, 0.08);
+  transition: all 0.2s ease;
+  display: flex;
+  gap: 24px;
+}
+
+.card-container:hover {
+  border-color: var(--gray-400);
+  box-shadow: 0 4px 12px rgba(46, 56, 86, 0.12);
+}
+
+.card-container.card-error {
+  border-color: #B00020;
+  box-shadow: 0 2px 8px rgba(176, 0, 32, 0.1);
+}
+
+/* Номер карточки */
+.card-number {
+  position: absolute;
+  top: -12px;
+  left: -12px;
+  width: 32px;
+  height: 32px;
+  background: var(--primary-color);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 16px;
+  z-index: 1;
+  box-shadow: 0 2px 4px rgba(66, 85, 255, 0.3);
+}
+
+/* Левая панель с иконками */
+.card-sidebar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding-right: 16px;
+  border-right: 1px solid var(--gray-300);
+}
+
+.icon-btn {
+  background: var(--gray-200);
+  border: 1px solid var(--gray-300);
+  border-radius: 8px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--gray-700);
+  transition: all 0.2s;
+}
+
+.icon-btn:hover {
+  background: var(--gray-300);
+  border-color: var(--gray-400);
+  color: var(--primary-color);
+}
+
+.icon-btn.highlight {
+  background: rgba(66, 85, 255, 0.1);
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+.icon-btn.locked {
+  background: rgba(176, 0, 32, 0.1);
+  border-color: #B00020;
+  color: #B00020;
+}
+
+/* Основное содержимое */
+.card-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.card-fields {
+  display: flex;
+  gap: 24px;
+}
+
+.term-section,
+.definition-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.section-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--gray-600);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.language-btn {
+  background: none;
+  border: none;
+  color: var(--primary-color);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.language-btn:hover {
+  background: rgba(66, 85, 255, 0.1);
+}
+
+/* Поля ввода */
+.input-wrapper {
+  position: relative;
+  background: var(--gray-200);
+  border: 2px solid transparent;
+  border-radius: 12px;
+  padding: 16px;
+  transition: all 0.2s;
+  min-height: 120px;
+}
+
+.input-wrapper:focus-within {
+  background: white;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(66, 85, 255, 0.1);
+}
+
+.term-section textarea,
+.definition-section textarea {
+  width: 100%;
+  min-height: 100px;
+  border: none;
+  background: transparent;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--gray-800);
+  resize: vertical;
+  outline: none;
+  font-family: inherit;
+}
+
+.term-section textarea::placeholder,
+.definition-section textarea::placeholder {
+  color: var(--gray-500);
+}
+
+.input-error {
+  border-color: #B00020 !important;
+  background: rgba(176, 0, 32, 0.02) !important;
+}
+
+.input-error:focus-within {
+  box-shadow: 0 0 0 3px rgba(176, 0, 32, 0.1) !important;
+}
+
+.error-text {
+  color: #B00020;
+  font-size: 12px;
+  font-weight: 500;
+  margin-top: 4px;
+  padding-left: 4px;
+}
+
+/* Панель с изображением */
+.media-panel {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: var(--gray-200);
+  border-radius: 12px;
+  margin-top: 8px;
+}
+.media-panel .icon-btn {
+  width: 40px;
+  height: 40px;
+  padding: 0; /* убираем лишний отступ */
+}
+.media-add-btn {
+  background: var(--gray-200);
+  border: 1px solid var(--gray-300);
+  border-radius: 8px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.media-add-btn:hover {
+  background: var(--gray-300);
+  border-color: var(--primary-color);
+}
+
+.image-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: white;
+  border: 2px solid var(--gray-300);
+  border-radius: 8px;
+  cursor: pointer;
+  color: var(--gray-700);
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.image-btn:hover {
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+  background: rgba(66, 85, 255, 0.05);
+}
+
+.image-btn .icon {
+  font-size: 20px;
+}
+
+.image-preview {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.image-preview img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid var(--gray-300);
+}
+
+.image-info {
+  font-size: 14px;
+  color: var(--gray-600);
+}
+
+/* Правая панель управления */
+.card-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding-left: 16px;
+  border-left: 1px solid var(--gray-300);
+}
+
+.drag-handle {
+  cursor: move;
+  color: var(--gray-500);
+  padding: 8px;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.drag-handle:hover {
+  background: var(--gray-300);
+  color: var(--gray-700);
+}
+
+.remove-btn {
+  background: rgba(176, 0, 32, 0.1);
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #B00020;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.remove-btn:hover {
+  background: rgba(176, 0, 32, 0.2);
+}
+
+.remove-btn:active {
+  transform: scale(0.95);
+}
+
+/* Транскрипция */
+.transcription-input {
+  margin-top: 8px;
+  padding: 8px 12px;
+  background: white;
+  border: 1px solid var(--gray-300);
+  border-radius: 6px;
+  font-size: 14px;
+  color: var(--gray-600);
+}
+
+.transcription-input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .card-container {
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .card-sidebar,
+  .card-controls {
+    flex-direction: row;
+    border: none;
+    border-top: 1px solid var(--gray-300);
+    border-bottom: 1px solid var(--gray-300);
+    padding: 12px 0;
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .card-fields {
+    flex-direction: column;
+  }
+  
+  .media-panel {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+.media-preview {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  border: 1px solid var(--gray-300);
+  border-radius: 8px;
+  padding: 4px 8px;
+  background: var(--gray-100);
+}
+
+.media-preview img {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.media-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0; /* важно для text-overflow */
+}
+
+.file-name {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 14px;
+  color: var(--gray-700);
+}
+
+.delete-btn {
+  background: none;
+  border: none;
+  color: #B00020;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+/* CardForm.css - Дополняем существующие стили */
+
+/* Ограничиваем ширину медиа-превью */
+.media-preview {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  border: 1px solid var(--gray-300);
+  border-radius: 8px;
+  padding: 4px 8px;
+  background: var(--gray-100);
+  max-width: 200px; /* Добавляем ограничение ширины */
+}
+
+.media-preview img {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 6px;
+  flex-shrink: 0; /* Запрещаем сжатие картинки */
+}
+
+.media-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0; /* важно для text-overflow */
+  overflow: hidden; /* Добавляем скрытие переполнения */
+}
+
+.file-name {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 12px; /* Уменьшаем шрифт */
+  color: var(--gray-700);
+  max-width: 100px; /* Ограничиваем ширину текста */
+}
+
+.delete-btn {
+  background: none;
+  border: none;
+  color: #B00020;
+  cursor: pointer;
+  font-size: 16px;
+  flex-shrink: 0; /* Запрещаем сжатие кнопки удаления */
+}
+
+/* Добавляем стили для лучшего отображения на маленьких экранах */
+@media (max-width: 768px) {
+  .media-preview {
+    max-width: 100%; /* На мобильных занимает всю доступную ширину */
+  }
+  
+  .file-name {
+    max-width: none; /* Убираем ограничение на мобильных */
+    font-size: 11px; /* Еще меньше на мобильных */
+  }
+}
+
+/* Улучшаем адаптивность для самих карточек */
+@media (max-width: 1024px) {
+  .card-fields {
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .card-container {
+    gap: 16px;
+  }
+}
+
+/* Дополнительно: делаем так, чтобы правые контролы не растягивались */
+.card-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding-left: 16px;
+  border-left: 1px solid var(--gray-300);
+  max-width: 150px; /* Ограничиваем ширину правой панели */
+}
+
+/* Улучшаем отображение аудио файлов */
+.media-preview:has(audio) {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 4px;
+}
+
+.media-preview audio {
+  width: 100%;
+  max-width: 180px; /* Ограничиваем ширину аудиоплеера */
+}

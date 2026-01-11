@@ -1,0 +1,46 @@
+/* FolderContents.css */
+
+.folder-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.folder-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 16px;
+}
+
+.folder-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  border-radius: 8px;
+  background: #f8f9fa;
+  text-decoration: none;
+  color: #212529;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.folder-card img {
+  width: 40px;
+  height: 40px;
+}
+
+.folder-card:hover {
+  background: #e9ecef;
+  transform: translateY(-2px);
+}
+
+.folder-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.folder-wrapper>.folder-actions {
+  display: flex;
+  justify-content: center;
+}
