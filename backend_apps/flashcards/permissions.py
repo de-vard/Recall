@@ -7,17 +7,23 @@ class FlashIsAuthor(permissions.BasePermission):
     """Автор """
 
     def has_permission(self, request, view):
+        # SAFE_METHODS — разрешаем
         if request.method in permissions.SAFE_METHODS:
             return True
 
-        course_public_id = request.data.get("course")
-        if not course_public_id:
-            return False
-        try:
-            course = Course.objects.only("author_id").get(public_id=course_public_id)
-        except Course.DoesNotExist:
-            return False
-        return course.author == request.user
+        # Если создаём, нужен course в data
+        if view.action == "create":
+            course_public_id = request.data.get("course")
+            if not course_public_id:
+                return False
+            try:
+                course = Course.objects.only("author_id").get(public_id=course_public_id)
+            except Course.DoesNotExist:
+                return False
+            return course.author == request.user
+
+        # Для update/partial_update достаточно проверки объекта
+        return True  # объектная проверка через has_object_permission
 
     def has_object_permission(self, request, view, obj):
         return request.user.public_id == obj.course.author.public_id

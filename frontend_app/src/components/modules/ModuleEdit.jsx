@@ -16,7 +16,15 @@ const ModuleEdit = () => {
   const { deleteCard: deleteCardRequest, createCard } = useCard();
   const { uploadImage, uploadSound } = useMedia();
   const { editCard: editCardRequest } = useCard();
-
+    
+    
+    
+  // Функция для генерации уникального ID
+  const generateUniqueId = () => {
+    // Используем timestamp + случайное число
+    return 'id-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+  };
+  
   // Загружаем данные модуля в state
   useEffect(() => {
     if (!module) return;
@@ -38,7 +46,7 @@ const ModuleEdit = () => {
     setCards((cards) => [
       ...cards,
       {
-        id: crypto.randomUUID(),
+        id: generateUniqueId(),
         term: "",
         definition: "",
         transcription: "",

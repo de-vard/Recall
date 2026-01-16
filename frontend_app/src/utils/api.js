@@ -1,60 +1,60 @@
-export const BASE_URL = "http://localhost:8000/api/v1";
+export const BASE_URL = "/api/v1";
 
 export const USER_ENDPOINTS = {
-    LOGIN: `${BASE_URL}/auth/login/`,
-    REGISTER: `${BASE_URL}/auth/register/`,
-    REFRESH: `${BASE_URL}/auth/refresh/`,
+    LOGIN: "/auth/login/",
+    REGISTER: "/auth/register/",
+    REFRESH: "/auth/refresh/",
 };
 
 export const FOLDER_ENDPOINTS = {
-    LIST: `${BASE_URL}/folders/`,
-    CREATE: `${BASE_URL}/folders/`,
-    RETRIEVE: (public_id) => `${BASE_URL}/folders/${public_id}/`,
-    PATCH: (public_id) => `${BASE_URL}/folders/${public_id}/`,
-    DELETE: (public_id) => `${BASE_URL}/folders/${public_id}/`
+    LIST: "/folders/",
+    CREATE: "/folders/",
+    RETRIEVE: (public_id) => `/folders/${public_id}/`,
+    PATCH: (public_id) => `/folders/${public_id}/`,
+    DELETE: (public_id) => `/folders/${public_id}/`
 };
 
 export const COURSE_ENDPOINTS = {
-    LIST: `${BASE_URL}/courses/`,
-    CREATE: `${BASE_URL}/courses/`,
-    MY: `${BASE_URL}/courses/my_courses/`,
-    RETRIEVE: (public_id) => `${BASE_URL}/courses/${public_id}/`,
-    PATCH: (public_id) => `${BASE_URL}/courses/${public_id}/`,
-    DELETE: (public_id) => `${BASE_URL}/courses/${public_id}/`,
-    TOGGLE_SUBSCRIPTION: (public_id) => `${BASE_URL}/courses/${public_id}/subscribe_unsubscribe/`,
-    TOGGLE_REACTION: (public_id) => `${BASE_URL}/courses/${public_id}/like_dislike/`
+    LIST: "/courses/",
+    CREATE: "/courses/",
+    MY: "/courses/my_courses/",
+    RETRIEVE: (public_id) => `/courses/${public_id}/`,
+    PATCH: (public_id) => `/courses/${public_id}/`,
+    DELETE: (public_id) => `/courses/${public_id}/`,
+    TOGGLE_SUBSCRIPTION: (public_id) => `/courses/${public_id}/subscribe_unsubscribe/`,
+    TOGGLE_REACTION: (public_id) => `/courses/${public_id}/like_dislike/`
 };
 
 export const IMAGE_ENDPOINTS={
-    CREATE: `${BASE_URL}/images/`, 
+    CREATE: "/images/", 
 };
 
 export const SOUND_ENDPOINTS={
-    CREATE: `${BASE_URL}/sounds/`, 
+    CREATE: "/sounds/", 
 };
 
 export const MODULE_ENDPOINTS = {
-    CREATE: `${BASE_URL}/flashcards/`,
-    RETRIEVE: (public_id) => `${BASE_URL}/flashcards/${public_id}/`,
-    PATCH: (public_id) => `${BASE_URL}/flashcards/${public_id}/`,
-    DELETE: (public_id) => `${BASE_URL}/flashcards/${public_id}/`,
+    CREATE: "/flashcards/",
+    RETRIEVE: (public_id) => `/flashcards/${public_id}/`,
+    PATCH: (public_id) => `/flashcards/${public_id}/`,
+    DELETE: (public_id) => `/flashcards/${public_id}/`,
 
 };
 
 export const CARD_ENDPOINTS ={
-    CREATE: `${BASE_URL}/cards/`,
-    RETRIEVE: (public_id) => `${BASE_URL}/cards/${public_id}/`,
-    PATCH: (public_id) => `${BASE_URL}/cards/${public_id}/`,
-    DELETE: (public_id) => `${BASE_URL}/cards/${public_id}/`,
+    CREATE: "/cards/",
+    RETRIEVE: (public_id) => `/cards/${public_id}/`,
+    PATCH: (public_id) => `/cards/${public_id}/`,
+    DELETE: (public_id) => `/cards/${public_id}/`,
 };
 
 export const STUDY_ENDPOINTS={
-    RETRIEVE: (public_id) => `${BASE_URL}/study/${public_id}/`,
-    POST: (public_id) => `${BASE_URL}/study/${public_id}/`,
-    DELETE: (public_id) => `${BASE_URL}/study/${public_id}/`,
+    RETRIEVE: (public_id) => `/study/${public_id}/`,
+    POST: (public_id) => `/study/${public_id}/`,
+    DELETE: (public_id) => `/study/${public_id}/`,
 }
 
 export const HISTORY_ENDPOINTS={
-    RETRIEVE_CARD: (public_id) => `${BASE_URL}/study/history/cards/${public_id}/`,
-    RETRIEVE_SESSIONS: (public_id) => `${BASE_URL}/study/${public_id}/history/sessions/`,
+    RETRIEVE_CARD: (public_id) => `/study/history/cards/${public_id}/`,
+    RETRIEVE_SESSIONS: (public_id) => `/study/${public_id}/history/sessions/`,
 }

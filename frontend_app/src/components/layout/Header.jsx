@@ -14,7 +14,7 @@ const Header = ({ toggleSidebar, sidebarOpen }) => {
       </div>
 
       <div className="search-box">
-        <input type="text" placeholder="Поиск..." />
+        <input type="text" placeholder="Поиск пока не работает(..." />
       </div>
 
       <UserMenu />

@@ -46,7 +46,7 @@ router.register(r"api/v1/images", ImageViewSet, basename="image")
 router.register(r"api/v1/sounds", SoundViewSet, basename="sound")
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('my-secret-admin-panel/', admin.site.urls),
     path("api/v1/study/<flashcard_set_id>/", StudyAPIView.as_view()),
     path("api/v1/study/<uuid:flashcard_set_id>/history/sessions/", StudySessionHistoryAPIView.as_view()),
     path("api/v1/study/history/cards/<uuid:card_id>/", CardProgressHistoryAPIView.as_view()),

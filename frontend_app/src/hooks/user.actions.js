@@ -1,4 +1,4 @@
-import axios from "axios";
+import axiosService from "../utils/axios";
 import { useNavigate } from "react-router-dom";
 import { USER_ENDPOINTS } from "../utils/api";
 
@@ -13,11 +13,10 @@ function useUserActions() {
         register,
         logout,
     };
-
     // ======= Вход пользователя =======
     function login(data) {
         // Отправляем POST-запрос на сервер с email + password
-        return axios.post(USER_ENDPOINTS.LOGIN, data).then((res) => {
+        return axiosService.post(USER_ENDPOINTS.LOGIN, data).then((res) => {
             // res.data содержит: access, refresh, user
             // Сохраняем эти данные в localStorage
             setUserData(res.data);
@@ -30,7 +29,7 @@ function useUserActions() {
     // ======= Регистрация пользователя =======
     function register(data) {
         // Отправляем POST-запрос для регистрации
-        return axios.post(USER_ENDPOINTS.REGISTER, data).then((res) => {
+        return axiosService.post(USER_ENDPOINTS.REGISTER, data).then((res) => {
             // Сервер возвращает такие же данные: access, refresh, user
             setUserData(res.data);
 
