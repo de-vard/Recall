@@ -51,17 +51,16 @@ axiosService.interceptors.response.use(
 // };
 
 const refreshAuthLogic = async (failedRequest) => {
-  return axios
-
-    .post(
-      `${BASE_URL}${USER_ENDPOINTS.REFRESH}`,
-      { refresh: getRefreshToken() },
-      { baseURL: BASE_URL },
-    )
+  return axiosService
+    .post(USER_ENDPOINTS.REFRESH, {
+      refresh: getRefreshToken(),
+    })
     .then((resp) => {
       const { access } = resp.data;
-      failedRequest.response.config.headers["Authorization"] =
-        "Bearer " + access;
+
+      failedRequest.response.config.headers.Authorization =
+        `Bearer ${access}`;
+
       localStorage.setItem(
         "auth",
         JSON.stringify({
@@ -73,9 +72,9 @@ const refreshAuthLogic = async (failedRequest) => {
     })
     .catch(() => {
       localStorage.removeItem("auth");
+      window.location.href = "/login";
     });
 };
-
 createAuthRefreshInterceptor(axiosService, refreshAuthLogic);
 
 export const fetcher = (url) => axiosService.get(url).then((res) => res.data);
