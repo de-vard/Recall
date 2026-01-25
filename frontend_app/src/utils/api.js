@@ -9,7 +9,8 @@ export const USER_ENDPOINTS = {
     LOGIN: "/auth/login/",
     REGISTER: "/auth/register/",
     REFRESH: "/auth/refresh/",
-    SOCIAL: (provider) => `${BASE_URL}/social/${provider}/`
+    // SOCIAL: (provider) => `${BASE_URL}/social/${provider}/`, локально
+    SOCIAL: (provider) => `/social/${provider}/` // для сервера
 };
 
 export const FOLDER_ENDPOINTS = {
