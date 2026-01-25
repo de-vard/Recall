@@ -16,12 +16,15 @@ Including another URLconf
 """
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 from rest_framework import routers
+
 
 from backend_apps.auth_api.viewsets.login import LoginViewSet
 from backend_apps.auth_api.viewsets.refresh import RefreshViewSet
 from backend_apps.auth_api.viewsets.register import RegisterViewSet
+from backend_apps.auth_api.viewsets.social_login import SocialLoginView
+
 from backend_apps.courses.views import CourseViewSet
 from backend_apps.flashcards.views import CardViewSet, FlashViewSet
 from backend_apps.folders.views import FolderViewSet
@@ -46,6 +49,7 @@ router.register(r"api/v1/images", ImageViewSet, basename="image")
 router.register(r"api/v1/sounds", SoundViewSet, basename="sound")
 
 urlpatterns = [
+    path('api/v1/social/<str:provider>/', SocialLoginView.as_view(), name='social-login'),
     path('my-secret-admin-panel/', admin.site.urls),
     path("api/v1/study/<flashcard_set_id>/", StudyAPIView.as_view()),
     path("api/v1/study/<uuid:flashcard_set_id>/history/sessions/", StudySessionHistoryAPIView.as_view()),

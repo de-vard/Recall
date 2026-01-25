@@ -44,6 +44,8 @@ class UserAdmin(admin.ModelAdmin):
         "email",
         "first_name",
         "last_name",
+        "social_provider",
+        "social_id",
         "is_active",
         "is_staff",
         "is_superuser",

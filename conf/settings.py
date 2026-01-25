@@ -35,9 +35,6 @@ DEBUG = env.bool('DEBUG', default=False)
 
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS')
 
-# указываем на пользовательскую модель
-AUTH_USER_MODEL = 'users.User'
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -51,6 +48,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',  # JWT авторизация\регистрация по токенам
     'drf_yasg',  # для документирования api
     'corsheaders',  # для возможности фронта отправлять запросы на django
+
 
     # local
     'backend_apps.users.apps.UsersConfig',
@@ -82,7 +80,7 @@ REST_FRAMEWORK = {
 
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',  # Аутентификация через JWT-токены
-        'rest_framework.authentication.SessionAuthentication',  # Todo: Аунтификция по сессии, убрать на проде
+        'rest_framework.authentication.SessionAuthentication',  # Аутентификация по сессии, для админки
     ),
     'DEFAULT_FILTER_BACKENDS': [
         'django_filters.rest_framework.DjangoFilterBackend'
@@ -109,6 +107,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
 ]
 
 ROOT_URLCONF = 'conf.urls'
@@ -133,6 +132,12 @@ WSGI_APPLICATION = 'conf.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.sqlite3",
+#         "NAME": "mydatabase",
+#     }
+# }
 
 DATABASES = {
     'default': {
@@ -144,6 +149,9 @@ DATABASES = {
         'PORT': '',
     }
 }
+
+# указываем на пользовательскую модель
+AUTH_USER_MODEL = 'users.User'
 
 # Mongo_BD
 MONGO_URI = os.getenv("MONGO_URI", "mongodb://localhost:27017/")
@@ -197,8 +205,18 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
-    # Добавьте адреса вашего продакшн-сервера
-    "http://155.212.145.145",   # IP-адрес сервера
-    "http://re-call.ru",        # Основной домен
-    "http://re-call.store", 
+    # адреса в продакшн-сервера
+    "http://155.212.145.145",  # IP-адрес сервера
+    "http://re-call.ru",  # Основной домен
+    "http://re-call.store",
 ]
+
+
+
+
+GOOGLE_REDIRECT_URI = env('GOOGLE_REDIRECT_URI')  # для соц. аут\рег через гугл
+
+AUTH_GITHUB_KEY = env('AUTH_GITHUB_KEY')
+AUTH_GITHUB_SECRET = env('AUTH_GITHUB_SECRET')
+AUTH_GOOGLE_OAUTH2_KEY = env('AUTH_GOOGLE_OAUTH2_KEY')
+AUTH_GOOGLE_OAUTH2_SECRET = env('AUTH_GOOGLE_OAUTH2_SECRET')

@@ -1,9 +1,15 @@
-export const BASE_URL = "/api/v1";
+// Для сервера
+// export const BASE_URL = "/api/v1";
+
+// Для локальной разработки 
+export const BASE_URL = "http://127.0.0.1:8000/api/v1";
+
 
 export const USER_ENDPOINTS = {
     LOGIN: "/auth/login/",
     REGISTER: "/auth/register/",
     REFRESH: "/auth/refresh/",
+    SOCIAL: (provider) => `${BASE_URL}/social/${provider}/`
 };
 
 export const FOLDER_ENDPOINTS = {

@@ -29,6 +29,7 @@ files
 .env
 .env.local
 .env.production
+frontend_app/.env
 
 # MacOS
 .DS_Store
@@ -37,7 +38,7 @@ files
 *.dump
 *.backup
 
-
+mydatabase
 # Если используете статику, которую собирает collectstatic
 staticfiles/
 

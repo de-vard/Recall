@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useUserActions } from "../../hooks/user.actions";
+import SocialLoginButtons from "./SocialLoginButtons";
 import "../../styles/Registration.css"; // Добавляем импорт стилей
 
 const Registration = () => {
@@ -102,6 +103,7 @@ const Registration = () => {
                     </Link>
                 </div>
             </form>
+            <SocialLoginButtons/>
         </section>
     );
 };

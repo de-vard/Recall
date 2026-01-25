@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useUserActions } from "../../hooks/user.actions";
 import "../../styles/Login.css"; // Добавляем импорт стилей
+import SocialLoginButtons from "./SocialLoginButtons";
 
 const Login = () => {
     const [form, setForm] = useState({ email: "", password: "" });
@@ -60,8 +61,10 @@ const Login = () => {
                     <Link to="/register/">
                         Впервые на сайте? Создать учетную запись
                     </Link>
+                    
                 </div>
-            </form>
+            </form> 
+            <SocialLoginButtons/>
         </section>
     );
 };

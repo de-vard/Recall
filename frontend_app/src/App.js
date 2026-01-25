@@ -9,6 +9,8 @@ import UnderConstructionSculptor from "./components/UnderConstructionSculptor";
 
 import Registration from "./components/auth/Registration";
 import Login from "./components/auth/Login";
+import AuthCallback from "./components/auth/AuthCallback";
+
 
 import CourseDetail from "./components/courses/CourseDetail";
 import CourseEdit from "./components/courses/CourseEdit";
@@ -37,6 +39,8 @@ function App() {
     <Routes>
       <Route path="/register/" element={<Registration />} />
       <Route path="/login/" element={<Login />} />
+      <Route path="/auth/callback" element={<AuthCallback />} />
+      
       <Route element={<ProtectedRoute />}>
         <Route element={<Layout />}>
           <Route path="/" element={<Home />} />

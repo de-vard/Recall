@@ -33,10 +33,9 @@ class UserManager(BaseUserManager, AbstractManager):
     def create_user(self, username, email, password=None, **kwargs):
         """Создаёт и возвращает обычного пользователя"""
         user = self._create_user(username, email, password, **kwargs)
-        # TODO: разработать активацию подтверждения пользователя по email, ниже код закомментирован временно так как
-        #  реализация подтверждения будет создана позже,поэтому для удобства пока пользователи создаются активными
-        # user.is_active = False
-        # user.save(using=self._db)
+
+        # user.is_active = False  # блокируем вход если почта не подтверждена
+        # user.save(using=self._db)  # сохраняем блокировку
         return user
 
     def create_superuser(self, username, email, password, **kwargs):
@@ -60,6 +59,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField(verbose_name="Имя", max_length=255)
     last_name = models.CharField(verbose_name="Фамилия", max_length=255)
     email = models.EmailField(verbose_name="email", db_index=True, unique=True)
+
+    social_provider = models.CharField("С какой соц. сети зарег. пользователь", max_length=20, blank=True, null=True)
+    social_id = models.CharField("Уникальны код соц. приложения", max_length=255, blank=True, null=True)
 
     is_staff = models.BooleanField(verbose_name="Персонал?", default=False)  # необходим для админки
     is_active = models.BooleanField(verbose_name="Активная УЗ", default=True)
@@ -130,3 +132,5 @@ class Follow(models.Model):
 
     def __str__(self):
         return f'{self.user_from} подписался на {self.user_to}'
+
+

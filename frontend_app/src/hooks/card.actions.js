@@ -11,6 +11,7 @@ export function useCard(public_id) {
     setLoading(true);
     try {
       const { data } = await axiosService.get(
+        
         CARD_ENDPOINTS.RETRIEVE(public_id),
       );
       setCard(data);
