@@ -5,6 +5,8 @@ from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 from rest_framework import serializers
 
+from conf import settings
+
 User = get_user_model()
 
 
@@ -42,7 +44,7 @@ class RegisterSerializer(serializers.ModelSerializer):
         send_mail(
             subject='Подтвердите регистрацию',
             message=f'Ссылка для активации (24 часа):\n{full_url}',
-            from_email='no-reply@yoursite.com',
+            from_email=settings.DEFAULT_FROM_EMAIL,
             recipient_list=[user.email],
             fail_silently=False,
         )
