@@ -29,17 +29,21 @@ function useUserActions() {
   }
 
   // ======= Регистрация пользователя =======
+  // function register(data) {
+  //   // Отправляем POST-запрос для регистрации
+  //   return axiosService.post(USER_ENDPOINTS.REGISTER, data).then((res) => {
+  //     // Сервер возвращает такие же данные: access, refresh, user
+  //     setUserData(res.data);
+
+  //     // Перенаправляем на главную после регистрации
+  //     navigate("/");
+  //   });
+  // }
   function register(data) {
-    // Отправляем POST-запрос для регистрации
-    return axiosService.post(USER_ENDPOINTS.REGISTER, data).then((res) => {
-      // Сервер возвращает такие же данные: access, refresh, user
-      setUserData(res.data);
-
-      // Перенаправляем на главную после регистрации
-      navigate("/");
-    });
+    return axiosService
+      .post(USER_ENDPOINTS.REGISTER, data)
+      .then((res) => res.data);
   }
-
   // ======= Выход пользователя =======
   function logout() {
     // Удаляем все данные пользователя и токены

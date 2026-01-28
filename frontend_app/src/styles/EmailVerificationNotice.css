@@ -1,0 +1,274 @@
+/* styles/EmailVerificationNotice.css */
+.em-ver-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  padding: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif;
+}
+
+.em-ver-card {
+  background: white;
+  border-radius: 24px;
+  padding: 40px;
+  width: 100%;
+  max-width: 500px;
+  box-shadow: 
+    0 20px 60px rgba(0, 0, 0, 0.1),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  animation: em-ver-slideUp 0.6s ease-out;
+}
+
+@keyframes em-ver-slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.em-ver-container h1 {
+  color: #1a202c;
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  text-align: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.em-ver-main-text {
+  color: #4a5568;
+  font-size: 16px;
+  line-height: 1.6;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.em-ver-main-text b {
+  color: #2d3748;
+  font-weight: 600;
+  background: linear-gradient(120deg, #a0c4ff 0%, #9bf6ff 100%);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.em-ver-warning-text {
+  background: linear-gradient(135deg, #fff9db 0%, #ffec99 100%);
+  border-left: 4px solid #ffd43b;
+  padding: 16px;
+  border-radius: 12px;
+  margin: 24px 0;
+  color: #5c3c00;
+  font-size: 14px;
+  line-height: 1.5;
+  animation: em-ver-pulse 2s infinite;
+}
+
+@keyframes em-ver-pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.01); }
+  100% { transform: scale(1); }
+}
+
+.em-ver-button {
+  width: 100%;
+  padding: 16px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin: 20px 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.em-ver-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: 0.5s;
+}
+
+.em-ver-button:hover::before {
+  left: 100%;
+}
+
+.em-ver-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+}
+
+.em-ver-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.em-ver-success {
+  background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+  border: 1px solid #b1dfbb;
+  color: #155724;
+  padding: 12px;
+  border-radius: 8px;
+  margin: 16px 0;
+  text-align: center;
+  animation: em-ver-fadeIn 0.5s ease;
+}
+
+.em-ver-error {
+  background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+  border: 1px solid #f5c6cb;
+  color: #721c24;
+  padding: 12px;
+  border-radius: 8px;
+  margin: 16px 0;
+  text-align: center;
+  animation: em-ver-fadeIn 0.5s ease;
+}
+
+@keyframes em-ver-fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Обновленные стили для часов */
+.em-ver-redirect-timer {
+  margin-top: 32px;
+  text-align: center;
+}
+
+.em-ver-redirect-timer > p {
+  color: #4a5568;
+  font-size: 15px;
+  margin-bottom: 20px;
+  font-weight: 500;
+}
+
+.em-ver-vintage-clock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.em-ver-clock-face {
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #f0f0f0, #ffffff);
+  border: 10px solid #8b7355;
+  box-shadow: 
+    inset 0 0 20px rgba(139, 115, 85, 0.3),
+    0 10px 30px rgba(0, 0, 0, 0.2),
+    0 0 0 6px #d4af37;
+  position: relative;
+  overflow: hidden;
+}
+
+.em-ver-roman-markers {
+  position: absolute;
+  inset: 0;
+  font-family: "Times New Roman", serif;
+  font-size: 14px;
+  color: #5d4037;
+  font-weight: bold;
+  pointer-events: none;
+}
+
+.em-ver-marker {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  transform: rotate(calc(var(--rot, 0) * 1deg));
+}
+
+.em-ver-marker::after {
+  content: attr(data-number);
+  position: absolute;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%) rotate(calc(-1 * var(--rot, 0) * 1deg));
+}
+
+.em-ver-hand {
+  position: absolute;
+  left: 50%;
+  bottom: 50%;
+  transform-origin: bottom center;
+  border-radius: 4px;
+  transition: transform 0.9s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.em-ver-second-hand {
+  width: 3px;
+  height: 68px;
+  background: linear-gradient(to top, #ff6b6b, #ff4757);
+  margin-left: -1.5px;
+  z-index: 5;
+}
+
+.em-ver-minute-hand {
+  width: 6px;
+  height: 52px;
+  background: linear-gradient(to top, #4a5568, #2d3748);
+  margin-left: -3px;
+  z-index: 4;
+  transform: rotate(45deg);
+}
+
+.em-ver-hour-hand {
+  width: 8px;
+  height: 38px;
+  background: linear-gradient(to top, #2d3748, #1a202c);
+  margin-left: -4px;
+  z-index: 3;
+  transform: rotate(90deg);
+}
+
+.em-ver-center-dot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 14px;
+  height: 14px;
+  background: #d4af37;
+  border: 3px solid #8b7355;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+}
+
+.em-ver-seconds-text {
+  font-size: 32px;
+  font-weight: 800;
+  color: #ff6b6b;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  font-family: 'Courier New', monospace;
+  background: linear-gradient(135deg, #ff6b6b, #ff4757);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  padding: 8px 16px;
+  border-radius: 12px;
+  background-color: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
