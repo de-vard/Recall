@@ -22,7 +22,7 @@ class RegisterViewSet(ViewSet):
         """
 
         # Передаём в сериализатор входящие данные из запроса
-        serializer = self.serializer_class(data=request.data)
+        serializer = self.serializer_class(data=request.data, context={'request': request})
 
         # Проверяем валидность данных; при ошибке выбрасывает исключение
         serializer.is_valid(raise_exception=True)
@@ -31,18 +31,8 @@ class RegisterViewSet(ViewSet):
         # serializer.save() вызывает метод create() в сериализаторе,
         # который использует User.objects.create_user(...)
         user = serializer.save()
-
-        # Генерируем JWT-токены для созданного пользователя:
-        # - refresh (долгоживущий)
-        # - access (короткоживущий)
-        refresh = RefreshToken.for_user(user)
-
-        # Формируем ответ:
-        # - данные пользователя (serializer.data)
-        # - refresh токен
-        # - access токен (здесь назван "token")
         return Response({
-            "user": serializer.data,
-            "refresh": str(refresh),
-            "token": str(refresh.access_token)
-        }, status=status.HTTP_201_CREATED)
+            "message": "Аккаунт создан. Проверьте почту для подтверждения email.",
+            "email_verified": False,
+        }, status=201)
+

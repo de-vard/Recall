@@ -19,11 +19,11 @@ from django.contrib import admin
 from django.urls import path, include, re_path
 from rest_framework import routers
 
-
 from backend_apps.auth_api.viewsets.login import LoginViewSet
 from backend_apps.auth_api.viewsets.refresh import RefreshViewSet
 from backend_apps.auth_api.viewsets.register import RegisterViewSet
 from backend_apps.auth_api.viewsets.social_login import SocialLoginView
+from backend_apps.auth_api.viewsets.verify_email import VerifyEmailView, ResendVerificationEmailAPIView
 
 from backend_apps.courses.views import CourseViewSet
 from backend_apps.flashcards.views import CardViewSet, FlashViewSet
@@ -49,6 +49,8 @@ router.register(r"api/v1/images", ImageViewSet, basename="image")
 router.register(r"api/v1/sounds", SoundViewSet, basename="sound")
 
 urlpatterns = [
+    path('api/v1/auth/verify-email/<uidb64>/<token>/', VerifyEmailView.as_view(), name='verify-email'),
+    path('api/v1/auth/resend-verification/', ResendVerificationEmailAPIView.as_view(), name='resend-verification'),
     path('api/v1/social/<str:provider>/', SocialLoginView.as_view(), name='social-login'),
     path('my-secret-admin-panel/', admin.site.urls),
     path("api/v1/study/<flashcard_set_id>/", StudyAPIView.as_view()),

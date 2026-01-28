@@ -1,9 +1,7 @@
 from django.contrib.auth import get_user_model
 from rest_framework import mixins
-
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
-
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
@@ -81,3 +79,5 @@ class UserViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixins.Des
         # если есть — отписываем
         follow.delete()
         return Response({"detail": "Отписка выполнена!"}, status=200)
+
+

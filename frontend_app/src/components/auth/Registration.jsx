@@ -32,6 +32,7 @@ const Registration = () => {
             formData.append("password", form.password);
 
             await register(formData);
+          
         } catch (err) {
             if (err?.request?.response) {
                 setError(err.request.response);

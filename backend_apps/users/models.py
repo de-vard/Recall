@@ -1,9 +1,11 @@
+import secrets
 import uuid
 
 from django.contrib.auth.base_user import BaseUserManager
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.urls import reverse
+from django.utils import timezone
 
 from backend_apps.abstract.models import AbstractManager
 from backend_apps.media.models import SizeValueValidator
@@ -34,8 +36,9 @@ class UserManager(BaseUserManager, AbstractManager):
         """Создаёт и возвращает обычного пользователя"""
         user = self._create_user(username, email, password, **kwargs)
 
-        # user.is_active = False  # блокируем вход если почта не подтверждена
-        # user.save(using=self._db)  # сохраняем блокировку
+        user.is_active = False  # блокируем вход если почта не подтверждена
+        user.is_email_verified = False  # блокируем вход если почта не подтверждена
+        user.save(using=self._db)  # сохраняем блокировку
         return user
 
     def create_superuser(self, username, email, password, **kwargs):
@@ -62,6 +65,16 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     social_provider = models.CharField("С какой соц. сети зарег. пользователь", max_length=20, blank=True, null=True)
     social_id = models.CharField("Уникальны код соц. приложения", max_length=255, blank=True, null=True)
+
+    is_email_verified = models.BooleanField("Email подтверждён", default=False)
+    email_verification_token = models.CharField(
+        "Токен подтверждения email",
+        max_length=64,
+        blank=True,
+        null=True,
+        unique=True,
+    )
+    email_verification_sent_at = models.DateTimeField("Когда отправлено письмо с подтверждением", null=True, blank=True)
 
     is_staff = models.BooleanField(verbose_name="Персонал?", default=False)  # необходим для админки
     is_active = models.BooleanField(verbose_name="Активная УЗ", default=True)
@@ -92,6 +105,14 @@ class User(AbstractBaseUser, PermissionsMixin):
     REQUIRED_FIELDS = ['username']  # обязательные при создании через createsuperuser
 
     objects = UserManager()  # Указываем менеджер модели
+
+    def generate_email_verification_token(self):
+        """Генерируем и возвращаем токен, для подтверждения почты"""
+        token = secrets.token_hex(32)[:56]  # создаем токен и уменьшаем его на 8 символов, что бы влез в url
+        self.email_verification_token = token
+        self.email_verification_sent_at = timezone.now()
+        self.save(update_fields=['email_verification_token', 'email_verification_sent_at'])
+        return token  # возвращаем свежий токен
 
     def __str__(self):
         return f"{self.username} {self.last_name}"
@@ -132,5 +153,3 @@ class Follow(models.Model):
 
     def __str__(self):
         return f'{self.user_from} подписался на {self.user_to}'
-
-

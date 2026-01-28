@@ -1,8 +1,9 @@
 // Для сервера
-export const BASE_URL = "/api/v1";
+// export const BASE_URL = "/api/v1";
 
 // Для локальной разработки 
 // export const BASE_URL = "http://127.0.0.1:8000/api/v1";
+export const  BASE_URL = process.env.REACT_APP_BASE_URL
 
 
 export const USER_ENDPOINTS = {
