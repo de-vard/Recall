@@ -37,6 +37,7 @@ frontend_app/.env
 # Базы данных, если используете не только SQLite (например, для тестов)
 *.dump
 *.backup
+.coverage
 
 mydatabase
 # Если используете статику, которую собирает collectstatic
