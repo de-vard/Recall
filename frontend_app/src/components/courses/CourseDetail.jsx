@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, useParams, useNavigate } from "react-router-dom";
+import { Link, useParams, useNavigate, useLocation} from "react-router-dom";
 import { useCourse } from "../../hooks/course.actions";
 import CourseActionButtons from "./CourseActionButtons";
 import moduleIcon from "../../assets/lesson-1.png";
@@ -12,6 +12,7 @@ import "../../styles/CourseDetail.css";
 const CourseDetail = () => {
   const { public_id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation(); // <-- добавляем location
   const { course, loading, error, toggleReaction, toggleSubscription } =
     useCourse(public_id);
 
@@ -20,6 +21,12 @@ const CourseDetail = () => {
   if (!course) return <div>Нет данных</div>;
 
   const handleGoBack = () => {
+        // если пришли из поиска — вернемся обратно
+    if (location.state?.from) {
+      navigate(-1);
+      return;
+    }
+    
     course.folder_title === "home"
       ? navigate("/")
       : navigate(`/folder/${course.folder}`);

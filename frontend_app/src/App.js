@@ -31,6 +31,7 @@ import ModuleEdit from "./components/modules/ModuleEdit";
 
 import StudyDetail from "./components/study/StudyDetail";
 import StudyHistory from "./components/study/StudyHistory";
+import CourseSearchResultsPage from "./components/courses/CourseSearchResultsPage";
 
 
 
@@ -58,6 +59,7 @@ function App() {
 
           <Route path="course/" element={<CourseList />} />
           <Route path="course/my" element={<CourseMy />} />
+          <Route path="course/results" element={<CourseSearchResultsPage />}/>
           <Route path="course/:public_id" element={<CourseDetail />} />
           <Route path="course/create/:public_id" element={<CourseCreate />} />
           <Route path="course/edit/:public_id" element={<CourseEdit />} />

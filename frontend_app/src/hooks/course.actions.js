@@ -8,6 +8,9 @@ export function useCourse(public_id) {
   const [loading, setLoading] = useState(true); // Состояние загрузки данных
   const [error, setError] = useState(null); // Состояние ошибки
 
+
+
+
   const loadCourse = async () => {
     setLoading(true);
     try {
@@ -67,6 +70,10 @@ export function useCourse(public_id) {
     return res.data;
   };
 
+
+
+
+// Загрузка курса при монтировании / смене public_id
   useEffect(() => {
     loadCourse();
   }, [public_id]);
@@ -75,7 +82,7 @@ export function useCourse(public_id) {
     course,
     loading,
     error,
-myCourses,
+    myCourses,
     loadCourse,
     createCourse,
     editCourse,

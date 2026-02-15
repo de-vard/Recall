@@ -5,6 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
+from backend_apps.courses.documents import CourseDocument
 from backend_apps.courses.models import Course, CourseStudent, CourseLike
 from backend_apps.courses.permissions import IsSubscribe, IsAuthor
 from backend_apps.courses.serializers import CourseDetailSerializer, CourseCreateSerializer, CourseListSerializer
@@ -157,4 +158,52 @@ class CourseViewSet(mixins.ListModelMixin,
         serializer = CourseListSerializer(queryset, many=True)
         return Response(serializer.data)
 
+    @action(detail=False, methods=['get'], url_path='search')
+    def search(self, request):
+        """ Поиск курсов по строке запроса (?q=...)
+            Возвращает список курсов, отсортированных по релевантности (Elasticsearch score)
+        """
+        q = request.GET.get('q', '').strip()
 
+        if not q:
+            return Response({"detail": "Параметр ?q= обязателен"}, status=400)
+
+        # Создаём объект поиска из нашего Document
+        # CourseDocument.search() — это как Model.objects.all(), только для Elasticsearch
+        # Фильтруем только публичные курсы (is_public=True)
+        # Это важно — чтобы в поиске не показывались приватные/черновики
+        # .filter('term', ...) — точное совпадение (не анализируется)
+        # search = CourseDocument.search().filter('term', is_public=True)
+        search = CourseDocument.search()
+
+        # multi_match — ищет по нескольким полям, title важнее (boost)
+        search = search.query(
+            "multi_match",  # тип запроса: поиск по нескольким полям сразу
+            query=q,  # то, что ввёл пользователь
+            fields=['title^5', 'description^2'],  # ^5 — title в 5 раза важнее, чем description
+            type="best_fields",
+            # стратегия выбора лучшего совпадения best_fields — берёт поле, где лучшее совпадение альтернативы:
+            # most_fields — суммирует все совпадения, cross_fields — трактует все поля как одно
+            fuzziness="AUTO",  # опечатки
+        )
+
+        # TODO: Подумай дан тем что бы выводить сперва новые курсы. Здесь можно добавить сортировку,
+        #  если релевантность не главное. По умолчанию сортировка идёт по _score (релевантность) Пример: .sort(
+        #  '-created')  → сначала новые курсы search = search.sort('-created')
+
+        # Выполняем запрос к Elasticsearch
+        # .execute() возвращает объект Response, в котором лежат все результаты
+        results = search.execute()
+
+        courses = list(results)
+
+        # Сериализуем найденные объекты курсов в JSON-формат
+        # используем тот же сериализатор, что и для списка курсов
+        # context={'request': request} — нужно для правильной генерации ссылок и полей is_liked / is_subscribed
+        serializer = CourseListSerializer(courses, many=True, context={'request': request})
+
+        return Response({
+            "count": results.hits.total.value,
+            "results": serializer.data,
+            "max_score": results.hits.max_score,
+        })

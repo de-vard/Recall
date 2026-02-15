@@ -30,7 +30,8 @@ export const COURSE_ENDPOINTS = {
     PATCH: (public_id) => `/courses/${public_id}/`,
     DELETE: (public_id) => `/courses/${public_id}/`,
     TOGGLE_SUBSCRIPTION: (public_id) => `/courses/${public_id}/subscribe_unsubscribe/`,
-    TOGGLE_REACTION: (public_id) => `/courses/${public_id}/like_dislike/`
+    TOGGLE_REACTION: (public_id) => `/courses/${public_id}/like_dislike/`,
+    SEARCH: (query) => `/courses/search/?q=${encodeURIComponent(query)}`,
 };
 
 export const IMAGE_ENDPOINTS={
