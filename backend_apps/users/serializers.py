@@ -15,7 +15,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('public_id', 'username', 'avatar', 'url')
+        fields = ('public_id', 'username', 'avatar', 'url', 'user_type')
 
 
 class CourseMiniSerializer(serializers.ModelSerializer):
@@ -34,7 +34,7 @@ class UserSerializerRetrieve(serializers.ModelSerializer):
         model = User
         fields = (
             'public_id', 'username', 'first_name', 'last_name',
-            'avatar', 'authored_courses'
+            'avatar', 'authored_courses', 'user_type', 'bio'
         )
 
 
@@ -55,7 +55,8 @@ class MeSerializerRetrieve(serializers.ModelSerializer):
         fields = (
             'public_id', 'username', 'first_name', 'last_name',
             'avatar', 'email', 'studying_courses', 'folders',
-            'followers', 'following', 'authored_courses',
+            'followers', 'following', 'authored_courses', 'user_type',
+            'bio',
         )
 
     def get_studying_courses(self, obj):
@@ -84,4 +85,4 @@ class UserAuthSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ("public_id", "username", "email", "avatar")
+        fields = ("public_id", "username", "email", "avatar", "user_type")

@@ -52,6 +52,23 @@ class UserManager(BaseUserManager, AbstractManager):
 
 class User(AbstractBaseUser, PermissionsMixin):
     """Пользовательская модель"""
+    class UserTypes(models.TextChoices):
+        school = "Школа / Лицей / Гимназия"
+        college = "Колледж / Техникум"
+        university = "Университет / Институт"
+        other_edu = "Другое образовательное учреждение"  # ДПО, центр доп. образования, детский центр и т.д.
+        pro_teacher = "Профессиональный преподаватель"
+        organization = "Организация / Компания"  # не образовательная
+        simple_user = "Простой пользователь / Энтузиаст"
+
+    user_type = models.CharField(
+        max_length=64,
+        choices=UserTypes.choices,
+        default=UserTypes.simple_user,
+        blank=True,
+        null=True,
+        verbose_name="Тип пользователя"
+    )
     public_id = models.UUIDField(
         db_index=True,  # Ускоряет поиск по public_id.
         unique=True,  # Запрещает дубликаты.
@@ -62,6 +79,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField(verbose_name="Имя", max_length=255)
     last_name = models.CharField(verbose_name="Фамилия", max_length=255)
     email = models.EmailField(verbose_name="email", db_index=True, unique=True)
+    bio = models.TextField(blank=True, verbose_name="О себе / организации")
 
     social_provider = models.CharField("С какой соц. сети зарег. пользователь", max_length=20, blank=True, null=True)
     social_id = models.CharField("Уникальны код соц. приложения", max_length=255, blank=True, null=True)

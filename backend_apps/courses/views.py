@@ -1,6 +1,8 @@
 from django.db.models import Count, Q
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, serializers, status, mixins
 from rest_framework.decorators import action
+from rest_framework.filters import OrderingFilter
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
@@ -19,7 +21,12 @@ class CourseViewSet(mixins.ListModelMixin,
                     GenericViewSet):
     lookup_field = "public_id"
     lookup_url_kwarg = "public_id"
+    filter_backends = [DjangoFilterBackend, OrderingFilter]  # Указываем какой класс будет использоваться для фильтра
+    filterset_fields = ["author__user_type"]  # Поля по которым происходит фильтрация
+    ordering_fields = ['created', 'likes_count', 'students_count', 'author__username']
     _course_object = None  # для кеширования, экземпляр класса, который хранит уже загруженный объект курса.
+
+
 
     def get_object(self):
         """ get_object - это полный контроль над выборкой объекта.

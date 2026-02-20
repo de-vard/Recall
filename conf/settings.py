@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'drf_yasg',  # для документирования api
     'corsheaders',  # для возможности фронта отправлять запросы на django
     'django_elasticsearch_dsl',  # поисковой движок Elasticsearch
+    'django_filters',  # django-filter для фильтрации по записям
 
     # local
     'backend_apps.users.apps.UsersConfig',
