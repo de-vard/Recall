@@ -36,8 +36,8 @@ class UserManager(BaseUserManager, AbstractManager):
         """Создаёт и возвращает обычного пользователя"""
         user = self._create_user(username, email, password, **kwargs)
 
-        user.is_active = False  # блокируем вход если почта не подтверждена
-        user.is_email_verified = False  # блокируем вход если почта не подтверждена
+        user.is_active = False  # блокируем вход, для того что бы пользователь подтвердил почту
+        user.is_email_verified = False  # блокируем вход, для того что бы пользователь подтвердил почту
         user.save(using=self._db)  # сохраняем блокировку
         return user
 

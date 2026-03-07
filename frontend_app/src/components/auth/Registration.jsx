@@ -16,44 +16,47 @@ const Registration = () => {
     username: "",
     email: "",
     password: "",
+    user_type: "simple_user",
   });
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  setError(null);
-  setLoading(true);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError(null);
+    setLoading(true);
 
-  try {
-    const formData = new FormData();
-    formData.append("username", form.username);
-    formData.append("email", form.email);
-    formData.append("password", form.password);
+    try {
+      const formData = new FormData();
+      formData.append("username", form.username);
+      formData.append("email", form.email);
+      formData.append("password", form.password);
+      formData.append("user_type", form.user_type);
 
-    const response = await register(formData);
+      const response = await register(formData);
 
-    // показываем экран подтверждения
-    setEmailForVerify(form.email);
-  } catch (err) {
-    // err.response.data содержит ошибки от сервера
-    if (err.response && err.response.data) {
-      const errors = err.response.data;
-      // Формируем текст ошибки для пользователя
-      const messages = [];
-      if (errors.email) messages.push(`Email: ${errors.email.join(" ")}`);
-      if (errors.username) messages.push(`Логин: ${errors.username.join(" ")}`);
-      if (errors.password) messages.push(`Пароль: ${errors.password.join(" ")}`);
-      setError(messages.join(" | "));
-    } else {
-      setError("Ошибка регистрации");
+      // показываем экран подтверждения
+      setEmailForVerify(form.email);
+    } catch (err) {
+      // err.response.data содержит ошибки от сервера
+      if (err.response && err.response.data) {
+        const errors = err.response.data;
+        // Формируем текст ошибки для пользователя
+        const messages = [];
+        if (errors.email) messages.push(`Email: ${errors.email.join(" ")}`);
+        if (errors.username) messages.push(`Логин: ${errors.username.join(" ")}`);
+        if (errors.password) messages.push(`Пароль: ${errors.password.join(" ")}`);
+        if (errors.user_type) messages.push(`Тип: ${errors.user_type.join(" ")}`);
+        setError(messages.join(" | "));
+      } else {
+        setError("Ошибка регистрации");
+      }
+    } finally {
+      setLoading(false);
     }
-  } finally {
-    setLoading(false);
-  }
-};
+  };
   if (emailForVerify) {
     return <EmailVerificationNotice email={emailForVerify} />;
   }
@@ -102,6 +105,26 @@ const handleSubmit = async (e) => {
             required
             className="registration-input"
           />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="user_type">Кем вы себя считаете? *</label>
+          <select
+            id="user_type"
+            name="user_type"
+            value={form.user_type}
+            onChange={handleChange}
+            className="registration-select"
+            required
+          >
+            <option value="simple_user">Простой пользователь / Энтузиаст</option>
+            <option value="school">Школа / Лицей / Гимназия</option>
+            <option value="college">Колледж / Техникум</option>
+            <option value="university">Университет / Институт</option>
+            <option value="other_edu">Другое образовательное учреждение</option>
+            <option value="pro_teacher">Профессиональный преподаватель</option>
+            <option value="organization">Организация / Компания</option>
+          </select>
         </div>
 
         <button type="submit" disabled={loading} className="registration-btn">
