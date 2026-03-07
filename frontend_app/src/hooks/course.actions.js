@@ -2,21 +2,28 @@ import axiosService from "../utils/axios.js";
 import { useState, useEffect } from "react";
 import { COURSE_ENDPOINTS } from "../utils/api.js";
 
-export function useCourse(public_id) {
+export function useCourse(public_id, filters = {}) {
   const [course, setCourse] = useState(null); // текущий курс
   const [myCourses, setMyCourses] = useState(null); // мои курсы
   const [loading, setLoading] = useState(true); // Состояние загрузки данных
   const [error, setError] = useState(null); // Состояние ошибки
 
-
-
-
   const loadCourse = async () => {
     setLoading(true);
     try {
-      const url = public_id
-        ? COURSE_ENDPOINTS.RETRIEVE(public_id)
-        : COURSE_ENDPOINTS.LIST;
+      let url;
+
+      if (public_id) {
+        url = COURSE_ENDPOINTS.RETRIEVE(public_id);
+      } else {
+        // убираем пустые параметры, чтобы ?author__user_type= не отправлялся
+        const cleanFilters = Object.fromEntries(
+          Object.entries(filters).filter(([_, v]) => v !== "" && v !== undefined && v !== null)
+        );
+        const params = new URLSearchParams(cleanFilters).toString();
+        url = `${COURSE_ENDPOINTS.LIST}${params ? `?${params}` : ''}`;
+      }
+
       const { data } = await axiosService.get(url);
       setCourse(data);
 
@@ -73,10 +80,10 @@ export function useCourse(public_id) {
 
 
 
-// Загрузка курса при монтировании / смене public_id
+  // Загрузка курса при монтировании / смене public_id
   useEffect(() => {
     loadCourse();
-  }, [public_id]);
+  }, [public_id, JSON.stringify(filters)]);
 
   return {
     course,

@@ -52,14 +52,15 @@ class UserManager(BaseUserManager, AbstractManager):
 
 class User(AbstractBaseUser, PermissionsMixin):
     """Пользовательская модель"""
+
     class UserTypes(models.TextChoices):
-        school = "Школа / Лицей / Гимназия"
-        college = "Колледж / Техникум"
-        university = "Университет / Институт"
-        other_edu = "Другое образовательное учреждение"  # ДПО, центр доп. образования, детский центр и т.д.
-        pro_teacher = "Профессиональный преподаватель"
-        organization = "Организация / Компания"  # не образовательная
-        simple_user = "Простой пользователь / Энтузиаст"
+        school = "school"
+        college = "college"
+        university = "university"
+        other_edu = "other_edu"  # ДПО, центр доп.образования, детский центр и т.д.
+        pro_teacher = "pro_teacher"  # Профессиональный преподаватель
+        organization = "organization"
+        simple_user = "simple_user"
 
     user_type = models.CharField(
         max_length=64,
