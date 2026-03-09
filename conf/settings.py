@@ -73,6 +73,17 @@ SWAGGER_SETTINGS = {
     },
 }
 
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    }
+}
+
+
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',  # для пагинации
     'PAGE_SIZE': 25,  # для пагинации
@@ -106,6 +117,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    # Собственный созданный middleware, для вывода пользователь на сайте или нет
+    'backend_apps.core.middleware.OnlineStatusMiddleware'
 
 ]
 

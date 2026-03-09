@@ -145,6 +145,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         return reverse('user-detail', kwargs={'public_id': self.public_id})
 
 
+
 class Follow(models.Model):
     """Промежуточная модель подписки на пользователя"""
     user_from = models.ForeignKey(
