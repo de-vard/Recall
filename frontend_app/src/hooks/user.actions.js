@@ -1,3 +1,5 @@
+//TODO: переименуй этот файл на вход или регистрацию
+
 import axiosService from "../utils/axios";
 import { useNavigate } from "react-router-dom";
 import { USER_ENDPOINTS } from "../utils/api";

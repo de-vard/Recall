@@ -32,6 +32,7 @@ import ModuleEdit from "./components/modules/ModuleEdit";
 import StudyDetail from "./components/study/StudyDetail";
 import StudyHistory from "./components/study/StudyHistory";
 import CourseSearchResultsPage from "./components/courses/CourseSearchResultsPage";
+import UserDetail from "./components/users/UserDetail";
 
 
 
@@ -69,6 +70,12 @@ function App() {
           <Route path="folder/edit/:public_id" element={<FolderEdit />} />
           <Route path="folder/create/:public_id" element={<FolderCreate />} />
           <Route path="folder/delete/:public_id" element={<FolderDelete />} />
+
+          <Route path="user/:public_id" element={<UserDetail />} />
+          {/* <Route path="folder/edit/:public_id" element={<FolderEdit />} />
+          <Route path="folder/create/:public_id" element={<FolderCreate />} />
+          <Route path="folder/delete/:public_id" element={<FolderDelete />} /> */}
+
         </Route>
       </Route>
     </Routes>

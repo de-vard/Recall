@@ -11,7 +11,12 @@ export const USER_ENDPOINTS = {
     REGISTER: "/auth/register/",
     REFRESH: "/auth/refresh/",
     // SOCIAL: (provider) => `${BASE_URL}/social/${provider}/`, локально
-    SOCIAL: (provider) => `/social/${provider}/` // для сервера
+    SOCIAL: (provider) => `/social/${provider}/`, // для сервера
+
+    LIST: "/users/",   // список пользователей
+    RETRIEVE: (public_id) => `/users/${public_id}/`,   // детальный просмотр
+    ME: "/users/me/", // свой профиль
+    FOLLOW: (public_id) => `/users/${public_id}/follow/`,  // действие подписки
 };
 
 export const FOLDER_ENDPOINTS = {

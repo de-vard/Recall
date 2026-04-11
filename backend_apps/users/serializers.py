@@ -4,6 +4,7 @@ from django_redis import get_redis_connection
 from django.utils import timezone
 from datetime import timedelta
 from backend_apps.courses.models import Course
+from backend_apps.users.models import Follow
 
 User = get_user_model()
 
@@ -33,14 +34,30 @@ class UserSerializerRetrieve(serializers.ModelSerializer):
     authored_courses = CourseMiniSerializer(many=True, read_only=True)
     is_online = serializers.SerializerMethodField()
     last_active = serializers.SerializerMethodField()
+    is_following = serializers.SerializerMethodField()
+    count_followers = serializers.SerializerMethodField()  # количество пользователей, подписанных на текущего
+    count_following = serializers.SerializerMethodField()  # количество пользователей, на которых подписан текущий
 
     class Meta:
         model = User
         fields = (
             'public_id', 'username', 'first_name', 'last_name',
             'avatar', 'is_online', 'last_active', 'user_type', 'bio',
-            'authored_courses',
+            'count_followers', 'count_following', 'authored_courses',
+            'is_following',
         )
+
+    def get_is_following(self, obj):
+        """Проверяет, подписан ли текущий пользователь на этого человека"""
+        request = self.context.get('request')
+        if not request or not request.user.is_authenticated:
+            return False
+
+        # Проверяем через промежуточную модель Follow
+        return Follow.objects.filter(
+            user_from=request.user,
+            user_to=obj
+        ).exists()
 
     def get_is_online(self, obj):
         """
@@ -110,9 +127,20 @@ class UserSerializerRetrieve(serializers.ModelSerializer):
         # "5 минут назад", "вчера в 14:30", "онлайн" и т.д.
         return last_time
 
+    def get_count_followers(self, obj):
+        # Todo: код не оптимизированный, добавил как заглушку, перейду на метод Count вы будущем
+        """Возвращает количество пользователей, которые подписаны на текущего пользователя"""
+        return len(list(obj.followers.values_list('username', flat=True)))
+
+    def get_count_following(self, obj):
+        # Todo: код не оптимизированный, добавил как заглушку, перейду на метод Count вы будущем
+        """ Возвращает количество пользователей, на которых подписан текущий пользователь"""
+        return len(list(obj.following.values_list('username', flat=True)))
+
 
 class MeSerializerRetrieve(serializers.ModelSerializer):
     """Детальный просмотр своего профиля """
+    # Todo: От наследуйся от UserSerializerRetrieve, что бы не было повтора кода
 
     email = serializers.EmailField(read_only=True)  # делаем поле не редактированным
     username = serializers.EmailField(read_only=True)  # делаем поле не редактированным
@@ -122,6 +150,8 @@ class MeSerializerRetrieve(serializers.ModelSerializer):
     authored_courses = serializers.SerializerMethodField()  # список курсов, созданных пользователем
     followers = serializers.SerializerMethodField()  # список пользователей, подписанных на текущего
     following = serializers.SerializerMethodField()  # список пользователей, на которых подписан текущий
+    count_followers = serializers.SerializerMethodField()  # количество пользователей, подписанных на текущего
+    count_following = serializers.SerializerMethodField()  # количество пользователей, на которых подписан текущий
 
     class Meta:
         model = User
@@ -129,7 +159,7 @@ class MeSerializerRetrieve(serializers.ModelSerializer):
             'public_id', 'username', 'first_name', 'last_name',
             'avatar', 'email', 'studying_courses', 'folders',
             'followers', 'following', 'authored_courses', 'user_type',
-            'bio',
+            'bio', 'count_followers', 'count_following',
         )
 
     def get_studying_courses(self, obj):
@@ -141,8 +171,11 @@ class MeSerializerRetrieve(serializers.ModelSerializer):
         return list(obj.folders.values_list('title', flat=True))
 
     def get_authored_courses(self, obj):
-        """Возвращает список курсов, которые создал пользователь"""
-        return list(obj.authored_courses.values_list('title', flat=True))
+        """Возвращает список курсов с public_id и title"""
+        return CourseMiniSerializer(
+            obj.authored_courses.all(),
+            many=True
+        ).data
 
     def get_followers(self, obj):
         """Возвращает список пользователей, которые подписаны на текущего пользователя"""
@@ -151,6 +184,16 @@ class MeSerializerRetrieve(serializers.ModelSerializer):
     def get_following(self, obj):
         """ Возвращает список пользователей, на которых подписан текущий пользователь"""
         return list(obj.following.values_list('username', flat=True))
+
+    def get_count_followers(self, obj):
+        # Todo: код не оптимизированный, добавил как заглушку, перейду на метод Count вы будущем
+        """Возвращает количество пользователей, которые подписаны на текущего пользователя"""
+        return len(list(obj.followers.values_list('username', flat=True)))
+
+    def get_count_following(self, obj):
+        # Todo: код не оптимизированный, добавил как заглушку, перейду на метод Count вы будущем
+        """ Возвращает количество пользователей, на которых подписан текущий пользователь"""
+        return len(list(obj.following.values_list('username', flat=True)))
 
 
 class UserAuthSerializer(serializers.ModelSerializer):
