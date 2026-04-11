@@ -118,7 +118,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
-    # Собственный созданный middleware, для вывода пользователь на сайте или нет
+    # Собственный созданный middleware, для вывода на сайте ли пользователь или нет
     'backend_apps.core.middleware.OnlineStatusMiddleware'
 
 ]

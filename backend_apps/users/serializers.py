@@ -1,6 +1,8 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
-
+from django_redis import get_redis_connection
+from django.utils import timezone
+from datetime import timedelta
 from backend_apps.courses.models import Course
 
 User = get_user_model()
@@ -29,13 +31,84 @@ class CourseMiniSerializer(serializers.ModelSerializer):
 class UserSerializerRetrieve(serializers.ModelSerializer):
     """Просмотр чужого профиля """
     authored_courses = CourseMiniSerializer(many=True, read_only=True)
+    is_online = serializers.SerializerMethodField()
+    last_active = serializers.SerializerMethodField()
 
     class Meta:
         model = User
         fields = (
             'public_id', 'username', 'first_name', 'last_name',
-            'avatar', 'authored_courses', 'user_type', 'bio'
+            'avatar', 'is_online', 'last_active', 'user_type', 'bio',
+            'authored_courses',
         )
+
+    def get_is_online(self, obj):
+        """
+        Проверяет, считается ли пользователь онлайн прямо сейчас.
+
+        Логика:
+        1. Берём текущее соединение с Redis
+        2. Получаем score (время последнего захода) пользователя из sorted set "online_users"
+        3. Если записи нет → пользователь точно не онлайн
+        4. Если запись есть → сравниваем его время с порогом (сейчас минус 10 минут)
+           Если время последнего действия ≥ порога → считаем онлайн
+        """
+        # Подключаемся к Redis (используем пул соединений из настроек django-redis)
+        r = get_redis_connection("default")
+
+        # ID пользователя должен быть строкой — Redis работает со строковыми ключами
+        user_id = str(obj.public_id)
+
+        # Получаем score (Unix timestamp последнего захода) для этого пользователя
+        # Если пользователя нет в множестве → вернёт None
+        score = r.zscore("online_users", user_id)
+
+        # Нет записи → пользователь не онлайн
+        if score is None:
+            return False
+
+        # Вычисляем пороговое время: сейчас минус 10 минут
+        # Всё, что новее этого времени — считается "онлайн"
+        threshold = timezone.now() - timedelta(minutes=10)
+
+        # Сравниваем: был ли пользователь активен после порогового времени
+        # score — это число (секунды с 1970), сравниваем с int(threshold.timestamp())
+        return score >= int(threshold.timestamp())
+
+    def get_last_active(self, obj):
+        """
+        Возвращает точное время последней активности пользователя (datetime объект).
+
+        Используется для отображения:
+        • "был 5 минут назад"
+        • "онлайн"
+        • или просто даты/времени, если давно не заходил
+
+        Возвращает None, если пользователь никогда не был замечен в "online_users"
+        """
+        # То же подключение к Redis
+        r = get_redis_connection("default")
+
+        user_id = str(obj.public_id)
+
+        # Получаем timestamp последнего захода
+        score = r.zscore("online_users", user_id)
+
+        # Нет данных → возвращаем None (в шаблоне/фронте можно показать "давно не был")
+        if score is None:
+            return None
+
+        # Преобразуем Unix timestamp (float) обратно в объект datetime
+        # с учётом часового пояса проекта (настроенного в settings TIME_ZONE)
+        last_time = timezone.datetime.fromtimestamp(
+            score,
+            tz=timezone.get_current_timezone()
+        )
+
+        # Возвращаем готовый datetime объект
+        # Дальше можно форматировать на фронте или в сериализаторе:
+        # "5 минут назад", "вчера в 14:30", "онлайн" и т.д.
+        return last_time
 
 
 class MeSerializerRetrieve(serializers.ModelSerializer):
