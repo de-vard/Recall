@@ -7,8 +7,9 @@ export function useCourse(public_id, filters = {}) {
   const [myCourses, setMyCourses] = useState(null); // мои курсы
   const [loading, setLoading] = useState(true); // Состояние загрузки данных
   const [error, setError] = useState(null); // Состояние ошибки
+  const [totalCount, setTotalCount] = useState(0);
 
-  const loadCourse = async () => {
+const loadCourse = async (pageNum = 1) => {
     setLoading(true);
     try {
       let url;
@@ -16,25 +17,38 @@ export function useCourse(public_id, filters = {}) {
       if (public_id) {
         url = COURSE_ENDPOINTS.RETRIEVE(public_id);
       } else {
-        // убираем пустые параметры, чтобы ?author__user_type= не отправлялся
         const cleanFilters = Object.fromEntries(
           Object.entries(filters).filter(([_, v]) => v !== "" && v !== undefined && v !== null)
         );
-        const params = new URLSearchParams(cleanFilters).toString();
-        url = `${COURSE_ENDPOINTS.LIST}${params ? `?${params}` : ''}`;
+
+        const limit = 25;
+        const offset = (pageNum - 1) * limit;
+
+        const params = new URLSearchParams({
+          ...cleanFilters,
+          limit,
+          offset,
+        }).toString();
+
+        url = `${COURSE_ENDPOINTS.LIST}?${params}`;
       }
 
       const { data } = await axiosService.get(url);
-      setCourse(data);
+      
+      if (public_id) {
+        setCourse(data);
+      } else {
+        setCourse(data);                    // {count, results}
+        setTotalCount(data.count || 0);
+      }
 
-      // мои курсы
+      // Загружаем "мои курсы"
       const { data: myData } = await axiosService.get(COURSE_ENDPOINTS.MY);
       setMyCourses(myData);
 
       setError(null);
     } catch (e) {
-      const errorMessage =
-        e.response?.data?.detail || e.message || "Ошибка загрузки;";
+      const errorMessage = e.response?.data?.detail || e.message || "Ошибка загрузки";
       setError(errorMessage);
     } finally {
       setLoading(false);
@@ -81,14 +95,15 @@ export function useCourse(public_id, filters = {}) {
 
 
   // Загрузка курса при монтировании / смене public_id
-  useEffect(() => {
-    loadCourse();
+useEffect(() => {
+    loadCourse(1);
   }, [public_id, JSON.stringify(filters)]);
 
   return {
     course,
     loading,
     error,
+    totalCount,
     myCourses,
     loadCourse,
     createCourse,

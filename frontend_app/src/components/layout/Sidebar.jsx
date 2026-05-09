@@ -21,6 +21,9 @@ const Sidebar = ({ isOpen, toggle }) => {
       <button className="sidebar-btn" onClick={() => navigate(`course/`)}>
         🔥 Популярные курсы
       </button>
+      <button className="sidebar-btn" onClick={() => navigate(`users/`)}>
+        🙍🏻‍♂️ Пользователи 
+      </button>
     </aside>
   );
 };

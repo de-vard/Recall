@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import mixins
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
@@ -15,6 +16,8 @@ User = get_user_model()
 class UserViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin, mixins.ListModelMixin,
                   GenericViewSet):
     lookup_field = 'public_id'
+    filter_backends = [DjangoFilterBackend, ]  # Указываем какой класс будет использоваться для фильтра
+    filterset_fields = ["user_type"]  # Поля по которым происходит фильтрация
 
     def get_queryset(self):
         if self.action == "list":
@@ -79,5 +82,3 @@ class UserViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixins.Des
         # если есть — отписываем
         follow.delete()
         return Response({"detail": "Отписка выполнена!"}, status=200)
-
-

@@ -78,7 +78,7 @@ const UserDetail = () => {
                     {!isOwnProfile && (
                         <button
                             className={`follow-btn ${user.is_following ? 'following' : ''}`}
-                            onClick={toggleFollow}
+                            onClick={() => toggleFollow(public_id)}
                         >
                             {user.is_following ? "✓ Вы подписаны" : "Подписаться"}
                         </button>
