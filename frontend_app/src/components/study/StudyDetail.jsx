@@ -8,6 +8,9 @@ const StudyDetail = () => {
   const navigate = useNavigate();
   const { study_cards, loading, error, createStudy, deleteStudy, loadStudy } =
     useStudy(public_id);
+
+  console.log("study_cards:", study_cards);
+
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState([]);
   const [isFlipped, setIsFlipped] = useState(false);
@@ -24,6 +27,9 @@ const StudyDetail = () => {
   const hasCards = study_cards && study_cards.length > 0;
   const currentCard = hasCards ? study_cards[currentIndex] : null;
 
+  // Вычисляем, видна ли сейчас сторона с термином
+  const isTermVisible = currentCard?.show_answer_first ? isFlipped : !isFlipped;
+
   // Обновляем src аудио при смене карточки
   useEffect(() => {
     if (currentCard?.sound) {
@@ -33,13 +39,13 @@ const StudyDetail = () => {
     }
   }, [currentCard?.sound]);
 
-  // Автопроигрывание: при смене звука или возврате на лицевую сторону
+  // Автопроигрывание: при смене звука или возврате на сторону с термином
   useEffect(() => {
     if (
       audioRef.current &&
       currentSoundUrl &&
       autoPlaySound &&
-      !isFlipped &&
+      isTermVisible &&
       hasCards
     ) {
       audioRef.current.currentTime = 0;
@@ -47,7 +53,7 @@ const StudyDetail = () => {
         console.log("Автопроигрывание заблокировано браузером:", err);
       });
     }
-  }, [currentSoundUrl, isFlipped, autoPlaySound, hasCards]);
+  }, [currentSoundUrl, isTermVisible, autoPlaySound, hasCards]);
 
   // Ранние возвраты (после всех хуков!)
   if (loading) return <div className="loading">Загрузка карточек...</div>;
@@ -119,87 +125,147 @@ const StudyDetail = () => {
     setAutoPlaySound((prev) => !prev);
   };
 
-return (
-  <div className="study-detail-container">
-    {hasCards ? (
-      <>
-        <div
-          className={`study-detail-flip-card ${isFlipped ? "study-detail-flipped" : ""}`}
-          onClick={handleFlip}
-        >
-          <div className="study-detail-flip-card-inner">
-            <div className="study-detail-flip-card-front">
-              <h2>{currentCard.term}</h2>
-              {currentCard.transcription && (
-                <p>[{currentCard.transcription}]</p>
-              )}
+  return (
+    <div className="study-detail-container">
+      {hasCards ? (
+        <>
+          <div
+            className={`study-detail-flip-card ${isFlipped ? "study-detail-flipped" : ""}`}
+            onClick={handleFlip}
+          >
+            <div className="study-detail-flip-card-inner">
+              {/* ЛИЦЕВАЯ СТОРОНА */}
+              <div className="study-detail-flip-card-front">
+                {currentCard.show_answer_first ? (
+                  // Показываем ответ (определение + картинка) первым
+                  <>
+                    {currentCard.image && (
+                      <img src={currentCard.image} alt="Иллюстрация" />
+                    )}
+                    <p>{currentCard.definition}</p>
+                  </>
+                ) : (
+                  // Показываем термин (слово + транскрипция + аудио) первым
+                  <>
+                    <h2>{currentCard.term}</h2>
+                    {currentCard.transcription && (
+                      <p>[{currentCard.transcription}]</p>
+                    )}
+                    <div className="study-detail-audio-container">
+                      <audio
+                        ref={audioRef}
+                        controls
+                        className="study-detail-card-audio"
+                        src={currentSoundUrl || undefined}
+                      >
+                        Ваш браузер не поддерживает аудио.
+                      </audio>
+                      <button
+                        className="study-detail-autoplay-toggle"
+                        onClick={toggleAutoPlay}
+                        onMouseDown={(e) => e.stopPropagation()}
+                        title={
+                          autoPlaySound
+                            ? "Автопроигрывание включено"
+                            : "Автопроигрывание выключено"
+                        }
+                      >
+                        {autoPlaySound ? "🔊" : "🔇"}
+                      </button>
+                    </div>
+                  </>
+                )}
+              </div>
 
-              <div className="study-detail-audio-container">
-                <audio
-                  ref={audioRef}
-                  controls
-                  className="study-detail-card-audio"
-                  src={currentSoundUrl || undefined}
-                >
-                  Ваш браузер не поддерживает аудио.
-                </audio>
-
-                <button
-                  className="study-detail-autoplay-toggle"
-                  onClick={toggleAutoPlay}
-                  onMouseDown={(e) => e.stopPropagation()}
-                  title={autoPlaySound ? "Автопроигрывание включено" : "Автопроигрывание выключено"}
-                >
-                  {autoPlaySound ? "🔊" : "🔇"}
-                </button>
+              {/* ОБРАТНАЯ СТОРОНА */}
+              <div className="study-detail-flip-card-back">
+                {currentCard.show_answer_first ? (
+                  // На обратной стороне показываем термин
+                  <>
+                    <h2>{currentCard.term}</h2>
+                    {currentCard.transcription && (
+                      <p>[{currentCard.transcription}]</p>
+                    )}
+                    <div className="study-detail-audio-container">
+                      <audio
+                        ref={audioRef}
+                        controls
+                        className="study-detail-card-audio"
+                        src={currentSoundUrl || undefined}
+                      >
+                        Ваш браузер не поддерживает аудио.
+                      </audio>
+                      <button
+                        className="study-detail-autoplay-toggle"
+                        onClick={toggleAutoPlay}
+                        onMouseDown={(e) => e.stopPropagation()}
+                        title={
+                          autoPlaySound
+                            ? "Автопроигрывание включено"
+                            : "Автопроигрывание выключено"
+                        }
+                      >
+                        {autoPlaySound ? "🔊" : "🔇"}
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  // На обратной стороне показываем ответ (определение + картинку)
+                  <>
+                    {currentCard.image && (
+                      <img src={currentCard.image} alt="Иллюстрация" />
+                    )}
+                    <p>{currentCard.definition}</p>
+                  </>
+                )}
               </div>
             </div>
-
-            <div className="study-detail-flip-card-back">
-              {currentCard.image && (
-                <img src={currentCard.image} alt="Иллюстрация" />
-              )}
-              <p>{currentCard.definition}</p>
-            </div>
           </div>
-        </div>
 
-        <div className="study-detail-progress-text">
-          {currentIndex + 1} / {study_cards.length}
-        </div>
+          <div className="study-detail-progress-text">
+            {currentIndex + 1} / {study_cards.length}
+          </div>
 
-        <div className="study-detail-answer-buttons">
-          <button onClick={() => handleAnswer(true)} disabled={isSubmitting}>
-            {isSubmitting ? "Отправка..." : "Знаю"}
+          <div className="study-detail-answer-buttons">
+            <button
+              onClick={() => handleAnswer(true)}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "Отправка..." : "Знаю"}
+            </button>
+            <button
+              onClick={() => handleAnswer(false)}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "Отправка..." : "Не знаю"}
+            </button>
+          </div>
+
+          <button
+            className="study-detail-reset-button"
+            onClick={handleResetProgress}
+            disabled={isDeleting}
+          >
+            {isDeleting
+              ? "Сбрасываем прогресс..."
+              : "Сбросить прогресс изучения"}
           </button>
-          <button onClick={() => handleAnswer(false)} disabled={isSubmitting}>
-            {isSubmitting ? "Отправка..." : "Не знаю"}
+        </>
+      ) : (
+        <div className="study-detail-congrats">
+          <h2>🎉 Поздравляем!</h2>
+          <p>Вы изучили все карточки в этом наборе.</p>
+          <button
+            className="study-detail-reset-button"
+            onClick={handleResetProgress}
+            disabled={isDeleting}
+          >
+            {isDeleting ? "Сбрасываем..." : "Сбросить прогресс изучения"}
           </button>
         </div>
-
-        <button
-          className="study-detail-reset-button"
-          onClick={handleResetProgress}
-          disabled={isDeleting}
-        >
-          {isDeleting ? "Сбрасываем прогресс..." : "Сбросить прогресс изучения"}
-        </button>
-      </>
-    ) : (
-      <div className="study-detail-congrats">
-        <h2>🎉 Поздравляем!</h2>
-        <p>Вы изучили все карточки в этом наборе.</p>
-        <button
-          className="study-detail-reset-button"
-          onClick={handleResetProgress}
-          disabled={isDeleting}
-        >
-          {isDeleting ? "Сбрасываем..." : "Сбросить прогресс изучения"}
-        </button>
-      </div>
-    )}
-  </div>
-);
+      )}
+    </div>
+  );
 };
 
 export default StudyDetail;

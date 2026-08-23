@@ -26,7 +26,7 @@ class FlashCardSetAdmin(admin.ModelAdmin):
     inlines = [CardInline]
 
     readonly_fields = ("created", "updated")
-    fields = ("title", "course", ("created", "updated"))
+    fields = ("title", "course", "show_answer_first", ("created", "updated"))
 
 
 # ---------------------- CARD ADMIN ---------------------- #

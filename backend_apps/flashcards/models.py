@@ -14,6 +14,10 @@ class FlashCardSet(AbstractModel, ProxyModel):
         related_name='lessons',
         verbose_name='Курсы'
     )
+    show_answer_first = models.BooleanField(
+        default=False,
+        verbose_name='Показывать ответ первым'
+    )
 
     class Meta:
         verbose_name = "Набор"

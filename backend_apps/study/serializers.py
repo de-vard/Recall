@@ -8,10 +8,11 @@ class CardSerializer(serializers.ModelSerializer):
     """Сериализатор неизученных карточек для метода GET"""
     image = serializers.SerializerMethodField()
     sound = serializers.SerializerMethodField()
+    show_answer_first = serializers.SerializerMethodField()
 
     class Meta:
         model = Card
-        fields = ('public_id', 'term', 'definition', 'transcription', 'image', 'sound')
+        fields = ('public_id', 'term', 'definition', 'transcription', 'image', 'sound', 'show_answer_first')
 
     def get_image(self, obj):
         if not obj.image or not obj.image.path_file:
@@ -24,6 +25,10 @@ class CardSerializer(serializers.ModelSerializer):
             return None
         request = self.context.get("request")
         return request.build_absolute_uri(obj.sound.path_file.url)
+
+    def get_show_answer_first(self, obj):
+        # obj.flashcard – это связанный набор
+        return obj.flashcard.show_answer_first
 
 
 class CardProgressInputSerializer(serializers.Serializer):
