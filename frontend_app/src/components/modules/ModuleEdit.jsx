@@ -13,22 +13,19 @@ const ModuleEdit = () => {
   const { module, editModule } = useModule(public_id);
   const [cards, setCards] = useState([]);
   const [title, setTitle] = useState("");
+  const [showAnswerFirst, setShowAnswerFirst] = useState(false); // новое
   const { deleteCard: deleteCardRequest, createCard } = useCard();
   const { uploadImage, uploadSound } = useMedia();
   const { editCard: editCardRequest } = useCard();
-    
-    
-    
-  // Функция для генерации уникального ID
+
   const generateUniqueId = () => {
-    // Используем timestamp + случайное число
     return 'id-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
   };
-  
-  // Загружаем данные модуля в state
+
   useEffect(() => {
     if (!module) return;
     setTitle(module.title);
+    setShowAnswerFirst(module.show_answer_first); // новое
     setCards(
       module.cards.map((card) => ({
         ...card,
@@ -41,7 +38,6 @@ const ModuleEdit = () => {
     );
   }, [module]);
 
-  //Добавление новой карточки
   const addCard = () => {
     setCards((cards) => [
       ...cards,
@@ -62,7 +58,6 @@ const ModuleEdit = () => {
       setCards((prev) => prev.filter((c) => c !== card));
       return;
     }
-
     await deleteCardRequest(card.public_id);
     setCards((prev) => prev.filter((c) => c.public_id !== card.public_id));
   };
@@ -76,24 +71,21 @@ const ModuleEdit = () => {
   };
 
   const handleCancel = () => {
-    //При отмене удаления возвращаемся обратно
-    navigate(-1); // возвращаемся назад
+    navigate(-1);
   };
 
-  // Сохранение модуля и карточек
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      // 1️⃣ (опционально) обновление модуля
-      await editModule({ title });
-
-      // 2️⃣ обработка карточек
+      // обновляем модуль, включая новое поле
+      await editModule({ 
+        title, 
+        show_answer_first: showAnswerFirst   // новое
+      });
 
       for (const card of cards) {
-        // 🔹 загрузка изображения
         let image = undefined;
-        
         if (card.image instanceof File) {
           const uploaded = await uploadImage(card.image);
           image = uploaded.public_id;
@@ -101,7 +93,6 @@ const ModuleEdit = () => {
           image = card.image.public_id;
         }
 
-        // 🔹 загрузка аудио
         let sound = undefined;
         if (card.sound instanceof File) {
           const uploaded = await uploadSound(card.sound);
@@ -118,20 +109,16 @@ const ModuleEdit = () => {
           sound,
         };
 
-        // 🆕 новая карточка
         if (card.isNew) {
           await createCard({
             ...payload,
             flashcard: public_id,
           });
-        }
-        // ✏️ существующая карточка
-        else {
+        } else {
           await editCardRequest(card.public_id, payload);
         }
       }
 
-      // 3️⃣ переход обратно
       navigate(`/module/${public_id}`);
     } catch (err) {
       console.error("Ошибка сохранения модуля:", err);
@@ -140,7 +127,7 @@ const ModuleEdit = () => {
   };
 
   return (
- <div className="module-edit">
+    <div className="module-edit">
       <h1>Редактирование модуля</h1>
       
       <form onSubmit={handleSubmit} className="module-edit-form">
@@ -152,6 +139,18 @@ const ModuleEdit = () => {
             className="module-title-input"
             placeholder="Введите название модуля"
           />
+        </div>
+
+        {/* НОВЫЙ ЧЕКБОКС */}
+        <div className="module-show-answer-first">
+          <label>
+            <input
+              type="checkbox"
+              checked={showAnswerFirst}
+              onChange={(e) => setShowAnswerFirst(e.target.checked)}
+            />
+            Показывать ответ первым
+          </label>
         </div>
 
         {cards.map((card, index) => (

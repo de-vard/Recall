@@ -50,6 +50,7 @@ class StudyAPIView(APIView):
         }
         """
         serializer = StudySessionResultSerializer(data=request.data)
+        print(request.data)
         serializer.is_valid(raise_exception=True)
 
         user_id = request.user.public_id
@@ -60,6 +61,9 @@ class StudyAPIView(APIView):
         for item in serializer.validated_data['results']:
             card = Card.objects.get(public_id=item['card_id'])
             result_dict[card] = item['is_known']
+        print(result_dict)
+
+
 
         session.save_result_cards(result_dict)
         session.save_result_session()

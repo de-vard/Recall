@@ -43,7 +43,7 @@ class FlashCardDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = FlashCardSet
-        fields = ("title", "course", "cards")
+        fields = ("title", "course", "cards", "show_answer_first")
 
 
 class FlashCardCreateSerializer(serializers.ModelSerializer):
