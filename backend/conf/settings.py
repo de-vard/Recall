@@ -52,7 +52,7 @@ INSTALLED_APPS = [
 # Настройка поискового движка Elasticsearch
 ELASTICSEARCH_DSL = {
     'default': {
-        'hosts': 'http://127.0.0.1:9200',  # в проде используй переменную среду env('ELASTIC_HOST'),
+        'hosts': 'http://elasticsearch:9200',  # в проде используй переменную среду env('ELASTIC_HOST'),
         # 'http_auth': (env('ELASTIC_USERNAME'), env('ELASTIC_PASSWORD')),   # если security включён
         # "ca_certs": env('ELASTIC_CA_CERT'),
         'timeout': 30,
@@ -76,7 +76,7 @@ SWAGGER_SETTINGS = {
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://127.0.0.1:6379/1",
+        "LOCATION": "redis://redis:6379/1",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }

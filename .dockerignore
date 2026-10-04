@@ -1,0 +1,14 @@
+.git
+**/__pycache__
+**/*.pyc
+**/.pytest_cache
+**/node_modules
+**/build
+**/.env
+**/*.md
+**/venv
+**/.venv
+backend/files
+backend/staticfiles
+backend/silk_profile
+*.drawio*
